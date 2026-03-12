@@ -37,7 +37,7 @@ export function SiteLayout({
             <img className="brand-mark" src={toAssetHref(activePath, 'logo.png')} alt="SnapFresh" />
             <div>
               <div className="brand-name">{siteConfig.appName}</div>
-              <div className="brand-tag">Meal clarity from a single photo</div>
+              <div className="brand-tag">Healthy eating, made clearer</div>
             </div>
           </a>
           <div className="nav-actions">
@@ -79,8 +79,8 @@ export function SiteLayout({
           <div>
             <div className="footer-title">{siteConfig.appName}</div>
             <p className="footer-copy">
-              SnapFresh turns meal photos into structured nutrition insights, saved meal history,
-              hydration context, and calmer everyday decisions.
+              SnapFresh helps you eat better by making balance, quality, and daily habits easier to
+              see.
             </p>
           </div>
           <div>

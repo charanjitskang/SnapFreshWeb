@@ -6,7 +6,6 @@ import {
   siteConfig,
   supportedLanguages,
   toPageHref,
-  trustSignals,
   type SitePath
 } from '../siteContent';
 
@@ -14,47 +13,47 @@ const appStoreCards = [
   {
     title: 'Privacy Policy',
     href: '/privacy/' as SitePath,
-    body: 'Clear language around sign-in, images, local storage, and cloud-linked services.'
+    body: 'Straightforward privacy details for photos, account data, and storage.'
   },
   {
     title: 'Terms of Use',
     href: '/terms/' as SitePath,
-    body: 'Expectations for AI estimates, premium features, and the product’s limits.'
+    body: 'Simple expectations for AI meal insights and premium features.'
   },
   {
     title: 'Support',
     href: '/support/' as SitePath,
-    body: 'A public support destination for users, testers, and App Store review.'
+    body: 'A clear support page for users who need help.'
   },
   {
     title: 'Data Deletion',
     href: '/data-deletion/' as SitePath,
-    body: 'A dedicated route for account and data deletion requests.'
+    body: 'Easy instructions for account and data deletion requests.'
   }
 ];
 
 const experienceSignals = [
-  { value: 'Photo first', label: 'Camera or gallery meal capture' },
-  { value: 'Score + macros', label: 'A calmer result screen after each scan' },
-  { value: `${supportedLanguages.length} languages`, label: 'Localized settings already in the app' },
-  { value: 'History + hydration', label: 'Daily context beyond a single meal' }
+  { value: 'Snap in seconds', label: 'Take a photo and get moving' },
+  { value: 'Balance first', label: 'Calories are context, not the goal' },
+  { value: `${supportedLanguages.length} languages`, label: 'Made for more than one kind of eater' },
+  { value: 'History + hydration', label: 'Healthy habits stay in view' }
 ];
 
 const storySteps = [
   {
     step: '01',
-    title: 'Scan without friction',
-    body: 'SnapFresh opens with the same light first move the app already uses: photo in, optional note, portion hint, then analyze.'
+    title: 'Snap the meal',
+    body: 'Take a photo, add a note if you want, and move on.'
   },
   {
     step: '02',
-    title: 'Read the signal quickly',
-    body: 'Scores, detected ingredients, macros, and suggestions are arranged to feel editorial and legible instead of dense.'
+    title: 'Get the gist fast',
+    body: 'See how balanced the meal looks, what it is missing, and where calories fit in.'
   },
   {
     step: '03',
-    title: 'Keep the streak visible',
-    body: 'Saved meals, hydration, and premium dashboard layers help users see patterns and make better next decisions.'
+    title: 'Stay on track',
+    body: 'Meals, hydration, and progress stay together so good choices feel easier to repeat.'
   }
 ];
 
@@ -62,6 +61,14 @@ const launchBenefits = [
   'Priority access when preview invites open',
   'Launch notes and product updates',
   'A chance to shape premium features early'
+];
+
+const launchNotes = [
+  'A thoughtful, supportive experience instead of a lecture.',
+  'Built to encourage balanced eating, not obsessive tracking.',
+  'Help, privacy, and account deletion pages are already in place.',
+  'AI insights are meant to guide better choices, not replace judgment.',
+  `Questions? Reach us at ${siteConfig.contactEmail}.`
 ];
 
 function DeviceFrame({
@@ -139,8 +146,8 @@ function ResultsPreview() {
         <ScoreRing score={84} label="Good" />
         <div className="results-copy">
           <div className="result-stat">
-            <strong>612</strong>
-            <span>kcal estimate</span>
+            <strong>Well balanced</strong>
+            <span>Protein, fiber, and variety in view</span>
           </div>
           <div className="result-stat">
             <strong>38g</strong>
@@ -169,8 +176,8 @@ function ResultsPreview() {
       </div>
 
       <div className="insight-stack">
-        <div className="insight-card">Balanced protein coverage with room for more greens.</div>
-        <div className="insight-card">Quality score and suggestions stay visible above the fold.</div>
+        <div className="insight-card">Solid protein, good balance, and a simple next step.</div>
+        <div className="insight-card">An easy read on what is working and what could improve.</div>
       </div>
     </DeviceFrame>
   );
@@ -191,8 +198,8 @@ function DashboardPreview() {
         <ScoreRing score={78} label="Strong" />
         <div className="dashboard-summary-copy">
           <strong>78 / 100</strong>
-          <span>Average food quality</span>
-          <p>Built from saved meal scans and trend summaries.</p>
+          <span>This week looks steady</span>
+          <p>A quick read on how your eating habits are trending.</p>
         </div>
       </div>
 
@@ -260,25 +267,24 @@ export function HomePage() {
       <section className="landing-hero">
         <div className="container landing-grid">
           <div className="hero-copy">
-            <div className="eyebrow">Built from the live SnapFresh app flow</div>
-            <h1>A premium way to understand what is on your plate.</h1>
+            <div className="eyebrow">Healthy eating, not just fewer calories</div>
+            <h1>Eat better, not just less.</h1>
             <p className="hero-lede">
-              SnapFresh turns a meal photo into a clear nutrition readout, a quality score, and a
-              visible habit trail across history, hydration, and goals. The experience starts light
-              and stays calm.
+              SnapFresh helps you judge how balanced a meal looks, spot what it needs, and build
+              healthier habits from a single photo.
             </p>
             <div className="hero-actions">
               <a className="button button-primary" href="#waitlist">
                 Join the waitlist
               </a>
               <a className="button button-secondary" href="#preview">
-                See the experience
+                Preview the app
               </a>
             </div>
             <div className="hero-meta">
-              <span>Meal scans from camera or library</span>
-              <span>Nutrition score, insights, and suggestions</span>
-              <span>History, hydration, and goal context</span>
+              <span>Photo scan</span>
+              <span>Balanced eating score</span>
+              <span>History and hydration</span>
             </div>
           </div>
 
@@ -287,9 +293,9 @@ export function HomePage() {
             <div className="hero-glow hero-glow-two" />
             <CapturePreview />
             <div className="floating-insight-card">
-              <div className="floating-insight-label">Live app behavior</div>
-              <strong>Photo to score to trend</strong>
-              <span>No calorie spreadsheet required</span>
+              <div className="floating-insight-label">One quick read</div>
+              <strong>See what the plate needs</strong>
+              <span>More balance, less guesswork</span>
             </div>
             <div className="floating-mini-card">
               <span>Hydration streak</span>
@@ -313,11 +319,11 @@ export function HomePage() {
       <section className="content-block story-block" id="preview">
         <div className="container">
           <div className="section-heading">
-            <div className="eyebrow">The product story</div>
-            <h2>Designed around the three moments users actually care about.</h2>
+            <div className="eyebrow">How it fits into a real day</div>
+            <h2>From one photo to a healthier next choice.</h2>
             <p className="section-copy">
-              Capture quickly, understand the meal without noise, then keep the pattern visible
-              over time. The landing page mirrors that same sequence.
+              It is built to make balanced eating easier to see, easier to act on, and easier to
+              keep up over time.
             </p>
           </div>
 
@@ -336,22 +342,19 @@ export function HomePage() {
       <section className="content-block showcase-block">
         <div className="container">
           <div className="section-heading">
-            <div className="eyebrow">Product previews</div>
-            <h2>Polished placeholders shaped by the app screens already in code.</h2>
-            <p className="section-copy">
-              These mockups echo the current scan, result, dashboard, and history surfaces while
-              leaving room for final screenshots later.
-            </p>
+            <div className="eyebrow">A closer look</div>
+            <h2>Three screens that make the habit stick.</h2>
+            <p className="section-copy">Scan, improve the plate, and come back to your progress.</p>
           </div>
 
           <div className="showcase-grid">
             <article className="showcase-card">
               <ResultsPreview />
               <div className="showcase-copy">
-                <h3>Meal analysis that feels editorial</h3>
+                <h3>A better read on the plate</h3>
                 <p>
-                  Quality score, macro estimates, and suggestions are organized for quick reading
-                  instead of dashboard overload.
+                  See balance, macros, and a few useful nudges without turning every meal into a
+                  math problem.
                 </p>
               </div>
             </article>
@@ -359,10 +362,9 @@ export function HomePage() {
             <article className="showcase-card is-accent">
               <DashboardPreview />
               <div className="showcase-copy">
-                <h3>Premium trend views without the weight</h3>
+                <h3>Healthy habits in one place</h3>
                 <p>
-                  The app already contains deeper dashboard surfaces for quality, macros, and
-                  hydration. This section gives them a more premium wrapper on the web.
+                  Weekly patterns, hydration, and food quality come together in one calm view.
                 </p>
               </div>
             </article>
@@ -370,10 +372,9 @@ export function HomePage() {
             <article className="showcase-card">
               <HistoryPreview />
               <div className="showcase-copy">
-                <h3>Momentum stays visible</h3>
+                <h3>Small choices add up</h3>
                 <p>
-                  Saved meals, timestamps, and scores help users stay consistent and compare days
-                  instead of treating each scan as an isolated event.
+                  When balanced meals live in one simple timeline, it is easier to stay consistent.
                 </p>
               </div>
             </article>
@@ -385,11 +386,10 @@ export function HomePage() {
         <div className="container launch-grid">
           <div className="waitlist-panel">
             <div className="eyebrow">Early access</div>
-            <h2>Open the waitlist before the App Store launch.</h2>
+            <h2>Be first when SnapFresh opens up.</h2>
             <p className="section-copy">
-              Collect early interest for preview builds, launch updates, and feedback loops. The
-              form supports a generic endpoint or Supabase-backed storage, with a local preview
-              fallback during development.
+              Join the waitlist for early access, product updates, and first access when the app
+              goes live.
             </p>
             <div className="benefit-list">
               {launchBenefits.map((benefit) => (
@@ -402,13 +402,12 @@ export function HomePage() {
           </div>
 
           <div className="launch-panel">
-            <div className="eyebrow">Trust surface</div>
-            <h2>Public launch materials stay close at hand.</h2>
+            <div className="eyebrow">Built with care</div>
+            <h2>Everything around the product feels ready, too.</h2>
             <ul className="trust-list">
-              {trustSignals.slice(0, 3).map((item) => (
+              {launchNotes.map((item) => (
                 <li key={item}>{item}</li>
               ))}
-              <li>Waitlist confirmations route through {siteConfig.contactEmail} workflows.</li>
             </ul>
 
             <div className="resource-grid">
