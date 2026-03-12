@@ -25,6 +25,8 @@ export function SiteLayout({
   pageActions,
   children
 }: SiteLayoutProps) {
+  const waitlistHref = `${toPageHref(activePath, '/')}#waitlist`;
+
   return (
     <div className="site-shell">
       <div className="site-backdrop site-backdrop-one" />
@@ -35,20 +37,25 @@ export function SiteLayout({
             <img className="brand-mark" src={toAssetHref(activePath, 'logo.png')} alt="SnapFresh" />
             <div>
               <div className="brand-name">{siteConfig.appName}</div>
-              <div className="brand-tag">AI meal intelligence for everyday eating</div>
+              <div className="brand-tag">Meal clarity from a single photo</div>
             </div>
           </a>
-          <nav className="site-nav" aria-label="Primary">
-            {navItems.map((item) => (
-              <a
-                key={item.href}
-                href={toPageHref(activePath, item.href)}
-                className={item.href === activePath ? 'nav-link is-active' : 'nav-link'}
-              >
-                {item.label}
-              </a>
-            ))}
-          </nav>
+          <div className="nav-actions">
+            <nav className="site-nav" aria-label="Primary">
+              {navItems.map((item) => (
+                <a
+                  key={item.href}
+                  href={toPageHref(activePath, item.href)}
+                  className={item.href === activePath ? 'nav-link is-active' : 'nav-link'}
+                >
+                  {item.label}
+                </a>
+              ))}
+            </nav>
+            <a className="button button-primary header-cta" href={waitlistHref}>
+              Join waitlist
+            </a>
+          </div>
         </div>
       </header>
 
@@ -72,8 +79,8 @@ export function SiteLayout({
           <div>
             <div className="footer-title">{siteConfig.appName}</div>
             <p className="footer-copy">
-              SnapFresh turns meal photos into structured nutrition insights, history, hydration
-              logs, and clearer food decisions.
+              SnapFresh turns meal photos into structured nutrition insights, saved meal history,
+              hydration context, and calmer everyday decisions.
             </p>
           </div>
           <div>
