@@ -6,8 +6,8 @@ export function SupportPage() {
     <SiteLayout
       activePath="/support/"
       pageBadge="Support"
-      pageTitle="Support for SnapFresh users and App Store review links"
-      pageIntro="Use this page as the public support destination for SnapFresh. It gives users a contact route, outlines the common issue categories, and links to privacy and deletion resources."
+      pageTitle="Support for SnapFresh users"
+      pageIntro="Need help with SnapFresh? Use this page to contact support, review common issue categories, and find privacy and data deletion resources."
       pageActions={
         <a className="button button-primary" href={`mailto:${siteConfig.contactEmail}`}>
           Email support
@@ -20,8 +20,8 @@ export function SupportPage() {
             <div className="eyebrow">Primary contact</div>
             <h2>{siteConfig.contactEmail}</h2>
             <p>
-              Include the email address associated with your SnapFresh account, your device type,
-              and clear reproduction steps.
+              When you contact us, include the email address tied to your SnapFresh account, your
+              device type, and clear steps to reproduce the issue.
             </p>
             <p>{siteConfig.supportWindow}</p>
           </article>
@@ -40,7 +40,7 @@ export function SupportPage() {
       <section className="content-block">
         <div className="container section-header">
           <div className="eyebrow">Issue categories</div>
-          <h2>Support pages work better when they reflect the actual product surface</h2>
+          <h2>Common reasons people reach out</h2>
         </div>
         <div className="container card-grid">
           {supportTopics.map((topic) => (
@@ -55,8 +55,8 @@ export function SupportPage() {
       <section className="content-block">
         <div className="container split-grid align-start">
           <article className="support-card-panel">
-            <div className="eyebrow">App Store references</div>
-            <h2>Useful companion links</h2>
+            <div className="eyebrow">Related pages</div>
+            <h2>Helpful links</h2>
             <div className="footer-links page-links">
               <a href={toPageHref('/support/', '/privacy/')}>Privacy Policy</a>
               <a href={toPageHref('/support/', '/terms/')}>Terms of Use</a>
@@ -65,10 +65,10 @@ export function SupportPage() {
           </article>
           <article className="support-card-panel">
             <div className="eyebrow">Deletion requests</div>
-            <h2>Account removal and data requests</h2>
+            <h2>Need your account or data removed?</h2>
             <p>
-              If a user wants account-linked deletion, direct them to the dedicated data deletion
-              page or have them email support with a verified request.
+              For account-linked deletion requests, use the dedicated data deletion page or email
+              support from the address tied to your account.
             </p>
             <a className="button button-secondary" href={toPageHref('/support/', '/data-deletion/')}>
               Open data deletion page

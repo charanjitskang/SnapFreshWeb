@@ -3,16 +3,10 @@ import { submitWaitlist } from '../lib/waitlist';
 
 type FormState = {
   email: string;
-  firstName: string;
-  goal: string;
-  platform: string;
 };
 
 const initialFormState: FormState = {
-  email: '',
-  firstName: '',
-  goal: 'Meal scoring',
-  platform: 'iPhone'
+  email: ''
 };
 
 function isValidEmail(email: string) {
@@ -33,7 +27,7 @@ export function WaitlistForm() {
     if (!isValidEmail(form.email)) {
       setStatus({
         tone: 'error',
-        message: 'Enter a valid email address to join the list.'
+        message: 'Enter a valid email address to join the waitlist.'
       });
       return;
     }
@@ -42,14 +36,19 @@ export function WaitlistForm() {
     setStatus({ tone: 'idle', message: '' });
 
     try {
-      const result = await submitWaitlist(form);
+      const result = await submitWaitlist({
+        email: form.email,
+        firstName: '',
+        goal: '',
+        platform: ''
+      });
       setForm(initialFormState);
       setStatus({
         tone: 'success',
         message:
           result.mode === 'local'
-            ? 'Preview mode: this signup was saved locally. Add waitlist env vars before deployment.'
-            : 'You are on the list. We will send early access updates when invites open.'
+            ? 'Preview mode: your signup was saved locally. Add the waitlist env vars before deploying.'
+            : "You're on the list. We'll send early access updates when invites open."
       });
     } catch (error) {
       const message =
@@ -67,67 +66,18 @@ export function WaitlistForm() {
     <form className="waitlist-form-card" onSubmit={handleSubmit}>
       <div className="waitlist-form-grid">
         <label className="field">
-          <span className="field-label">Email</span>
           <input
             className="field-input"
             type="email"
             name="email"
             autoComplete="email"
-            placeholder="you@example.com"
+            placeholder="Enter your email"
             value={form.email}
             onChange={(event) =>
               setForm((current) => ({ ...current, email: event.target.value }))
             }
             required
           />
-        </label>
-
-        <label className="field">
-          <span className="field-label">First name</span>
-          <input
-            className="field-input"
-            type="text"
-            name="firstName"
-            autoComplete="given-name"
-            placeholder="Optional"
-            value={form.firstName}
-            onChange={(event) =>
-              setForm((current) => ({ ...current, firstName: event.target.value }))
-            }
-          />
-        </label>
-
-        <label className="field">
-          <span className="field-label">What do you care about most?</span>
-          <select
-            className="field-input field-select"
-            name="goal"
-            value={form.goal}
-            onChange={(event) =>
-              setForm((current) => ({ ...current, goal: event.target.value }))
-            }
-          >
-            <option>Meal scoring</option>
-            <option>Macros and nutrition</option>
-            <option>History and habit tracking</option>
-            <option>Hydration and goals</option>
-          </select>
-        </label>
-
-        <label className="field">
-          <span className="field-label">Preferred launch device</span>
-          <select
-            className="field-input field-select"
-            name="platform"
-            value={form.platform}
-            onChange={(event) =>
-              setForm((current) => ({ ...current, platform: event.target.value }))
-            }
-          >
-            <option>iPhone</option>
-            <option>Android</option>
-            <option>Both</option>
-          </select>
         </label>
       </div>
 
@@ -136,7 +86,8 @@ export function WaitlistForm() {
       </button>
 
       <p className="waitlist-privacy-note">
-        By joining, you agree to receive early access and launch updates from SnapFresh.
+        By joining the waitlist, you agree to receive early access and launch updates from
+        SnapFresh.
       </p>
 
       {status.message ? (

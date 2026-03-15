@@ -6,11 +6,11 @@ export function TermsPage() {
     <SiteLayout
       activePath="/terms/"
       pageBadge="Terms of Use"
-      pageTitle="Terms for using SnapFresh and its AI-powered meal features"
-      pageIntro="These terms set user expectations around account use, AI-generated nutrition estimates, premium-ready features, and limits on liability."
+      pageTitle="Terms for using SnapFresh"
+      pageIntro="These terms explain the rules for using SnapFresh, including accounts, AI-generated nutrition estimates, premium features, and limits on liability."
       pageActions={
         <a className="button button-secondary" href={`mailto:${siteConfig.contactEmail}`}>
-          Terms contact
+          Contact support
         </a>
       }
     >

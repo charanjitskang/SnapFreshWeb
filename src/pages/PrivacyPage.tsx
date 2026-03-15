@@ -6,11 +6,11 @@ export function PrivacyPage() {
     <SiteLayout
       activePath="/privacy/"
       pageBadge="Privacy Policy"
-      pageTitle="How SnapFresh handles account, image, and nutrition data"
-      pageIntro="This policy reflects the current mobile app behavior: account sign-in, meal photo analysis, local device storage, Supabase-backed services, and support interactions."
+      pageTitle="How SnapFresh handles your account, photos, and nutrition data"
+      pageIntro="This policy explains how SnapFresh handles sign-in details, meal photos, on-device data, and support requests."
       pageActions={
         <a className="button button-secondary" href={`mailto:${siteConfig.contactEmail}`}>
-          Privacy contact
+          Contact privacy
         </a>
       }
     >

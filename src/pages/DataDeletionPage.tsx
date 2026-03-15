@@ -6,8 +6,8 @@ export function DataDeletionPage() {
     <SiteLayout
       activePath="/data-deletion/"
       pageBadge="Data Deletion"
-      pageTitle="How SnapFresh users can request account and data deletion"
-      pageIntro="This page is intended for App Store compliance and user support. It distinguishes between data stored only on the device and account-linked records associated with SnapFresh services."
+      pageTitle="How to request account or data deletion"
+      pageIntro="Use this page to request deletion of account-linked SnapFresh data and to understand what stays on your device unless you remove it."
       pageActions={
         <a className="button button-primary" href={`mailto:${siteConfig.contactEmail}`}>
           Start deletion request

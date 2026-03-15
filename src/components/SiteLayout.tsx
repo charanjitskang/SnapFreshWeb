@@ -1,5 +1,6 @@
-import type { PropsWithChildren, ReactNode } from 'react';
-import { siteConfig, toAssetHref, toPageHref, type SitePath } from '../siteContent';
+import { useEffect, useState, type PropsWithChildren, type ReactNode } from 'react';
+import { PlateMascot } from './PlateMascot';
+import { siteConfig, toPageHref, type SitePath } from '../siteContent';
 
 type SiteLayoutProps = PropsWithChildren<{
   activePath: SitePath;
@@ -8,14 +9,6 @@ type SiteLayoutProps = PropsWithChildren<{
   pageBadge?: string;
   pageActions?: ReactNode;
 }>;
-
-const navItems = [
-  { href: '/', label: 'Overview' },
-  { href: '/privacy/', label: 'Privacy' },
-  { href: '/terms/', label: 'Terms' },
-  { href: '/support/', label: 'Support' },
-  { href: '/data-deletion/', label: 'Data deletion' }
-] as const;
 
 export function SiteLayout({
   activePath,
@@ -26,36 +19,49 @@ export function SiteLayout({
   children
 }: SiteLayoutProps) {
   const waitlistHref = `${toPageHref(activePath, '/')}#waitlist`;
+  const [isWaitlistVisible, setIsWaitlistVisible] = useState(false);
+
+  useEffect(() => {
+    const waitlistSection = document.getElementById('waitlist');
+
+    if (!waitlistSection) {
+      setIsWaitlistVisible(false);
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsWaitlistVisible(entry.isIntersecting);
+      },
+      {
+        threshold: 0.2
+      }
+    );
+
+    observer.observe(waitlistSection);
+
+    return () => {
+      observer.disconnect();
+    };
+  }, [activePath]);
 
   return (
     <div className="site-shell">
       <div className="site-backdrop site-backdrop-one" />
       <div className="site-backdrop site-backdrop-two" />
+
       <header className="site-header">
-        <div className="container nav-row">
+        <div className="container brand-row">
           <a className="brand" href={toPageHref(activePath, '/')}>
-            <img className="brand-mark" src={toAssetHref(activePath, 'logo.png')} alt="SnapFresh" />
+            <PlateMascot className="brand-mark" hideArms label="SnapFresh plate logo" />
             <div>
-              <div className="brand-name">{siteConfig.appName}</div>
-              <div className="brand-tag">Healthy eating, made clearer</div>
+              <div className="brand-name" aria-label={siteConfig.appName}>
+                <span>Snap</span>
+                <strong>Fresh</strong>
+              </div>
+              <div className="brand-tag">Scan Score Share</div>
             </div>
           </a>
-          <div className="nav-actions">
-            <nav className="site-nav" aria-label="Primary">
-              {navItems.map((item) => (
-                <a
-                  key={item.href}
-                  href={toPageHref(activePath, item.href)}
-                  className={item.href === activePath ? 'nav-link is-active' : 'nav-link'}
-                >
-                  {item.label}
-                </a>
-              ))}
-            </nav>
-            <a className="button button-primary header-cta" href={waitlistHref}>
-              Join waitlist
-            </a>
-          </div>
         </div>
       </header>
 
@@ -79,12 +85,12 @@ export function SiteLayout({
           <div>
             <div className="footer-title">{siteConfig.appName}</div>
             <p className="footer-copy">
-              SnapFresh helps you eat better by making balance, quality, and daily habits easier to
-              see.
+              SnapFresh helps you eat better by making balance, meal quality, and daily habits
+              easier to see.
             </p>
           </div>
           <div>
-            <div className="footer-title">Hosted pages</div>
+            <div className="footer-title">Resources</div>
             <div className="footer-links">
               <a href={toPageHref(activePath, '/privacy/')}>Privacy Policy</a>
               <a href={toPageHref(activePath, '/terms/')}>Terms of Use</a>
@@ -105,6 +111,17 @@ export function SiteLayout({
           </div>
         </div>
       </footer>
+
+      <div
+        className={isWaitlistVisible ? 'floating-waitlist-bar is-hidden' : 'floating-waitlist-bar'}
+      >
+        <div className="container floating-waitlist-inner">
+          <p className="floating-waitlist-copy">Coming soon this month...</p>
+          <a className="button button-primary floating-waitlist-button" href={waitlistHref}>
+            Join the waitlist
+          </a>
+        </div>
+      </div>
     </div>
   );
 }

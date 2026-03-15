@@ -4,7 +4,6 @@ import { SiteLayout } from '../components/SiteLayout';
 import { WaitlistForm } from '../components/WaitlistForm';
 import {
   siteConfig,
-  supportedLanguages,
   toPageHref,
   type SitePath
 } from '../siteContent';
@@ -13,30 +12,30 @@ const appStoreCards = [
   {
     title: 'Privacy Policy',
     href: '/privacy/' as SitePath,
-    body: 'Straightforward privacy details for photos, account data, and storage.'
+    body: 'Clear details on how SnapFresh handles photos, account data, and storage.'
   },
   {
     title: 'Terms of Use',
     href: '/terms/' as SitePath,
-    body: 'Simple expectations for AI meal insights and premium features.'
+    body: 'Plain-language terms for AI meal insights, accounts, and premium features.'
   },
   {
     title: 'Support',
     href: '/support/' as SitePath,
-    body: 'A clear support page for users who need help.'
+    body: 'A simple support page for users who need help.'
   },
   {
     title: 'Data Deletion',
     href: '/data-deletion/' as SitePath,
-    body: 'Easy instructions for account and data deletion requests.'
+    body: 'Step-by-step instructions for account and data deletion requests.'
   }
 ];
 
 const experienceSignals = [
-  { value: 'Snap in seconds', label: 'Take a photo and get moving' },
-  { value: 'Balance first', label: 'Calories are context, not the goal' },
-  { value: `${supportedLanguages.length} languages`, label: 'Made for more than one kind of eater' },
-  { value: 'History + hydration', label: 'Healthy habits stay in view' }
+  { value: 'Snap in seconds', label: 'Take a photo and keep going' },
+  { value: 'Balance first', label: 'Calories are context, not the whole story' },
+  { value: 'Calories + nutrients', label: 'See the numbers without losing the bigger picture' },
+  { value: 'Share', label: 'Show off the balance on your plate' }
 ];
 
 const storySteps = [
@@ -47,27 +46,28 @@ const storySteps = [
   },
   {
     step: '02',
-    title: 'Get the gist fast',
-    body: 'See how balanced the meal looks, what it is missing, and where calories fit in.'
+    title: 'See what stands out',
+    body: 'Get a quick read on balance, what the meal may be missing, and where calories fit in.'
   },
   {
     step: '03',
     title: 'Stay on track',
-    body: 'Meals, hydration, and progress stay together so good choices feel easier to repeat.'
+    body: 'Meals, hydration, and progress stay together so healthy choices are easier to repeat.'
   }
 ];
 
-const launchBenefits = [
-  'Priority access when preview invites open',
-  'Launch notes and product updates',
-  'A chance to shape premium features early'
+const foodScoreFactors = [
+  'Vegetable & fruit content',
+  'Protein balance',
+  'Carb quality',
+  'Overall nutrition composition'
 ];
 
 const launchNotes = [
-  'A thoughtful, supportive experience instead of a lecture.',
+  'A supportive experience instead of a scolding one.',
   'Built to encourage balanced eating, not obsessive tracking.',
-  'Help, privacy, and account deletion pages are already in place.',
-  'AI insights are meant to guide better choices, not replace judgment.',
+  'Support, privacy, and account deletion pages are in place from day one.',
+  'AI insights are there to guide better choices, not replace judgment.',
   `Questions? Reach us at ${siteConfig.contactEmail}.`
 ];
 
@@ -113,150 +113,17 @@ function CapturePreview() {
         <strong>Fresh</strong>
       </div>
       <div className="scan-stage">
-        <div className="scan-stage-chip">Camera or gallery</div>
         <PlateMascot className="scan-stage-plate" label="SnapFresh plate mascot" />
-        <div className="scan-stage-chip is-bottom">Notes + portion</div>
+        <div className="scan-stage-actions">
+          <span className="scan-stage-button is-active">Camera</span>
+          <span className="scan-stage-button">Gallery</span>
+        </div>
       </div>
       <div className="device-note-card">
         <span className="device-note-label">Meal note</span>
         <p>Vegetable rice bowl with grilled chicken and yogurt sauce.</p>
       </div>
-      <div className="segment-row">
-        <span className="segment-pill is-active">Medium</span>
-        <span className="segment-pill">High protein</span>
-        <span className="segment-pill">Lunch</span>
-      </div>
       <div className="device-action">Analyze meal</div>
-    </DeviceFrame>
-  );
-}
-
-function ResultsPreview() {
-  return (
-    <DeviceFrame label="Analysis">
-      <div className="device-header-row">
-        <div>
-          <div className="screen-eyebrow">Lunch snapshot</div>
-          <h3 className="device-title">Grain bowl</h3>
-        </div>
-        <span className="screen-chip">Saved</span>
-      </div>
-
-      <div className="results-summary">
-        <ScoreRing score={84} label="Good" />
-        <div className="results-copy">
-          <div className="result-stat">
-            <strong>Well balanced</strong>
-            <span>Protein, fiber, and variety in view</span>
-          </div>
-          <div className="result-stat">
-            <strong>38g</strong>
-            <span>protein</span>
-          </div>
-        </div>
-      </div>
-
-      <div className="metric-grid">
-        <div className="metric-tile">
-          <span>Carbs</span>
-          <strong>54g</strong>
-        </div>
-        <div className="metric-tile">
-          <span>Fat</span>
-          <strong>21g</strong>
-        </div>
-        <div className="metric-tile">
-          <span>Fiber</span>
-          <strong>11g</strong>
-        </div>
-        <div className="metric-tile">
-          <span>Items</span>
-          <strong>5</strong>
-        </div>
-      </div>
-
-      <div className="insight-stack">
-        <div className="insight-card">Solid protein, good balance, and a simple next step.</div>
-        <div className="insight-card">An easy read on what is working and what could improve.</div>
-      </div>
-    </DeviceFrame>
-  );
-}
-
-function DashboardPreview() {
-  return (
-    <DeviceFrame label="Dashboard">
-      <div className="device-header-row">
-        <div>
-          <div className="screen-eyebrow">This week</div>
-          <h3 className="device-title">Your rhythm</h3>
-        </div>
-        <span className="screen-chip is-accent">Premium</span>
-      </div>
-
-      <div className="dashboard-summary-card">
-        <ScoreRing score={78} label="Strong" />
-        <div className="dashboard-summary-copy">
-          <strong>78 / 100</strong>
-          <span>This week looks steady</span>
-          <p>A quick read on how your eating habits are trending.</p>
-        </div>
-      </div>
-
-      <div className="macro-strip">
-        <div className="macro-column">
-          <span>Protein</span>
-          <div className="macro-bar">
-            <div className="macro-fill protein" />
-          </div>
-        </div>
-        <div className="macro-column">
-          <span>Carbs</span>
-          <div className="macro-bar">
-            <div className="macro-fill carbs" />
-          </div>
-        </div>
-        <div className="macro-column">
-          <span>Hydration</span>
-          <div className="water-row">
-            <span className="water-bottle is-full" />
-            <span className="water-bottle is-full" />
-            <span className="water-bottle is-mid" />
-            <span className="water-bottle" />
-          </div>
-        </div>
-      </div>
-    </DeviceFrame>
-  );
-}
-
-function HistoryPreview() {
-  return (
-    <DeviceFrame label="History">
-      <div className="device-header-row">
-        <div>
-          <div className="screen-eyebrow">Saved meals</div>
-          <h3 className="device-title">Today</h3>
-        </div>
-        <span className="screen-chip">3 scans</span>
-      </div>
-
-      <div className="history-stack">
-        {[
-          ['Greek yogurt bowl', '8:12 AM', '88'],
-          ['Chicken grain bowl', '1:08 PM', '84'],
-          ['Salmon plate', '7:19 PM', '91']
-        ].map(([meal, time, score]) => (
-          <div key={meal} className="history-item">
-            <div className="history-thumb" />
-            <div className="history-copy">
-              <strong>{meal}</strong>
-              <span>{time}</span>
-            </div>
-            <div className="history-score">{score}</div>
-          </div>
-        ))}
-      </div>
     </DeviceFrame>
   );
 }
@@ -267,40 +134,18 @@ export function HomePage() {
       <section className="landing-hero">
         <div className="container landing-grid">
           <div className="hero-copy">
-            <div className="eyebrow">Healthy eating, not just fewer calories</div>
-            <h1>Eat better, not just less.</h1>
+            <div className="eyebrow">Healthy eating without the obsession</div>
+            <h1>See how balanced your plate is.</h1>
             <p className="hero-lede">
-              SnapFresh helps you judge how balanced a meal looks, spot what it needs, and build
-              healthier habits from a single photo.
+              SnapFresh scores your meal for nutrient balance and gives you insights and
+              suggestions to help you build a more balanced diet.
             </p>
-            <div className="hero-actions">
-              <a className="button button-primary" href="#waitlist">
-                Join the waitlist
-              </a>
-              <a className="button button-secondary" href="#preview">
-                Preview the app
-              </a>
-            </div>
-            <div className="hero-meta">
-              <span>Photo scan</span>
-              <span>Balanced eating score</span>
-              <span>History and hydration</span>
-            </div>
           </div>
 
           <div className="hero-visual">
             <div className="hero-glow hero-glow-one" />
             <div className="hero-glow hero-glow-two" />
             <CapturePreview />
-            <div className="floating-insight-card">
-              <div className="floating-insight-label">One quick read</div>
-              <strong>See what the plate needs</strong>
-              <span>More balance, less guesswork</span>
-            </div>
-            <div className="floating-mini-card">
-              <span>Hydration streak</span>
-              <strong>1.8L today</strong>
-            </div>
           </div>
         </div>
       </section>
@@ -320,10 +165,10 @@ export function HomePage() {
         <div className="container">
           <div className="section-heading">
             <div className="eyebrow">How it fits into a real day</div>
-            <h2>From one photo to a healthier next choice.</h2>
+            <h2>From one photo to a better next choice.</h2>
             <p className="section-copy">
-              It is built to make balanced eating easier to see, easier to act on, and easier to
-              keep up over time.
+              SnapFresh is built to make balanced eating easier to notice, act on, and keep up
+              over time.
             </p>
           </div>
 
@@ -339,45 +184,52 @@ export function HomePage() {
         </div>
       </section>
 
-      <section className="content-block showcase-block">
-        <div className="container">
-          <div className="section-heading">
-            <div className="eyebrow">A closer look</div>
-            <h2>Three screens that make the habit stick.</h2>
-            <p className="section-copy">Scan, improve the plate, and come back to your progress.</p>
+      <section className="content-block food-score-block">
+        <div className="container food-score-grid">
+          <div className="section-heading food-score-copy">
+            <div className="eyebrow">Food Quality Score</div>
+            <h2>Understand your food, not just its calories.</h2>
+            <p className="section-copy">
+              Calories only tell part of the story. Two meals can have the same calorie count and
+              offer very different nutrition.
+            </p>
+            <p className="section-copy">
+              SnapFresh gives each meal a Food Quality Score so you can quickly see its balance,
+              variety, and overall quality.
+            </p>
           </div>
 
-          <div className="showcase-grid">
-            <article className="showcase-card">
-              <ResultsPreview />
-              <div className="showcase-copy">
-                <h3>A better read on the plate</h3>
-                <p>
-                  See balance, macros, and a few useful nudges without turning every meal into a
-                  math problem.
-                </p>
+          <div className="food-score-card">
+            <div className="food-score-comparison">
+              <div className="comparison-meal">
+                <span className="comparison-label">Meal A</span>
+                <strong>620 kcal</strong>
+                <p>Fried sandwich and chips</p>
               </div>
-            </article>
+              <div className="comparison-divider">vs</div>
+              <div className="comparison-meal">
+                <span className="comparison-label">Meal B</span>
+                <strong>620 kcal</strong>
+                <p>Salmon, rice, greens, and fruit</p>
+              </div>
+            </div>
 
-            <article className="showcase-card is-accent">
-              <DashboardPreview />
-              <div className="showcase-copy">
-                <h3>Healthy habits in one place</h3>
-                <p>
-                  Weekly patterns, hydration, and food quality come together in one calm view.
-                </p>
-              </div>
-            </article>
+            <div className="food-score-breakdown">
+              <span className="food-score-label">SnapFresh evaluates</span>
+              <ul className="food-score-list">
+                {foodScoreFactors.map((factor) => (
+                  <li key={factor}>{factor}</li>
+                ))}
+              </ul>
+            </div>
 
-            <article className="showcase-card">
-              <HistoryPreview />
-              <div className="showcase-copy">
-                <h3>Small choices add up</h3>
-                <p>
-                  When balanced meals live in one simple timeline, it is easier to stay consistent.
-                </p>
-              </div>
-            </article>
+            <div className="food-score-summary">
+              <ScoreRing score={84} label="Healthy" />
+              <p>
+                The score is meant to highlight balance, quality, and what your meal may be
+                missing, not just whether the calorie number is low.
+              </p>
+            </div>
           </div>
         </div>
       </section>
@@ -386,24 +238,16 @@ export function HomePage() {
         <div className="container launch-grid">
           <div className="waitlist-panel">
             <div className="eyebrow">Early access</div>
-            <h2>Be first when SnapFresh opens up.</h2>
+            <h2>Be first for early bird offers.</h2>
             <p className="section-copy">
-              Join the waitlist for early access, product updates, and first access when the app
-              goes live.
+              Join the waitlist to hear when SnapFresh goes live.
             </p>
-            <div className="benefit-list">
-              {launchBenefits.map((benefit) => (
-                <div key={benefit} className="benefit-pill">
-                  {benefit}
-                </div>
-              ))}
-            </div>
             <WaitlistForm />
           </div>
 
           <div className="launch-panel">
             <div className="eyebrow">Built with care</div>
-            <h2>Everything around the product feels ready, too.</h2>
+            <h2>The experience around the product matters, too.</h2>
             <ul className="trust-list">
               {launchNotes.map((item) => (
                 <li key={item}>{item}</li>
