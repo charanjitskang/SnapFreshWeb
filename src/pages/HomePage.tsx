@@ -35,7 +35,16 @@ const experienceSignals = [
   { value: 'Snap in seconds', label: 'Take a photo and keep going' },
   { value: 'Balance first', label: 'Calories are context, not the whole story' },
   { value: 'Calories + nutrients', label: 'See the numbers without losing the bigger picture' },
-  { value: 'Share', label: 'Show off the balance on your plate' }
+  {
+    value: 'Share',
+    label: 'Choose from multiple templates to share your plate',
+    bullets: [
+      'Score and balance',
+      'Calories and nutrients',
+      'Guess my score/calories',
+      'Liquified glass effects'
+    ]
+  }
 ];
 
 const storySteps = [
@@ -64,10 +73,9 @@ const foodScoreFactors = [
 ];
 
 const launchNotes = [
-  'A supportive experience instead of a scolding one.',
+  'Quick and easy onboarding without a long questionnaire.',
+  'Customize the app around what matters to you; choose to see only the features you use.',
   'Built to encourage balanced eating, not obsessive tracking.',
-  'Support, privacy, and account deletion pages are in place from day one.',
-  'AI insights are there to guide better choices, not replace judgment.',
   `Questions? Reach us at ${siteConfig.contactEmail}.`
 ];
 
@@ -156,6 +164,13 @@ export function HomePage() {
             <article key={signal.label} className="signal-card">
               <div className="signal-value">{signal.value}</div>
               <p className="signal-copy">{signal.label}</p>
+              {signal.bullets ? (
+                <ul className="signal-list">
+                  {signal.bullets.map((bullet) => (
+                    <li key={bullet}>{bullet}</li>
+                  ))}
+                </ul>
+              ) : null}
             </article>
           ))}
         </div>
@@ -247,7 +262,7 @@ export function HomePage() {
 
           <div className="launch-panel">
             <div className="eyebrow">Built with care</div>
-            <h2>The experience around the product matters, too.</h2>
+            <h2>Simple to start, easy to make your own.</h2>
             <ul className="trust-list">
               {launchNotes.map((item) => (
                 <li key={item}>{item}</li>

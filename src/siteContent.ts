@@ -9,7 +9,7 @@ export type SitePath = '/' | '/privacy/' | '/terms/' | '/support/' | '/data-dele
 export const siteConfig = {
   appName: 'SnapFresh',
   legalName: 'SnapFresh',
-  contactEmail: 'support@snapfresh.app',
+  contactEmail: 'support@ujascode.co.uk',
   supportWindow: 'We aim to reply within three business days.',
   effectiveDate: 'March 10, 2026',
   lastUpdated: 'March 10, 2026'

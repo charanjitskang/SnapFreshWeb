@@ -83,14 +83,7 @@ export function SiteLayout({
       <footer className="site-footer">
         <div className="container footer-grid">
           <div>
-            <div className="footer-title">{siteConfig.appName}</div>
-            <p className="footer-copy">
-              SnapFresh helps you eat better by making balance, meal quality, and daily habits
-              easier to see.
-            </p>
-          </div>
-          <div>
-            <div className="footer-title">Resources</div>
+            <div className="footer-title">Links</div>
             <div className="footer-links">
               <a href={toPageHref(activePath, '/privacy/')}>Privacy Policy</a>
               <a href={toPageHref(activePath, '/terms/')}>Terms of Use</a>
@@ -103,11 +96,6 @@ export function SiteLayout({
             <a className="footer-mail" href={`mailto:${siteConfig.contactEmail}`}>
               {siteConfig.contactEmail}
             </a>
-            <p className="footer-copy">
-              Effective date: {siteConfig.effectiveDate}
-              <br />
-              Last updated: {siteConfig.lastUpdated}
-            </p>
           </div>
         </div>
       </footer>
