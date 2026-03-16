@@ -1,7 +1,14 @@
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
+import { buildCanonicalUrl, getPublicPageByInputPath, getSiteUrl, publicPages } from './scripts/seo-config.mjs';
 
-export default defineConfig(({ mode }) => {
+function toPosixPath(value: string) {
+  return value.split(path.sep).join('/');
+}
+
+export default defineConfig(() => {
   const prodWaitlistTarget =
     'https://rhaupemsfddxqigxjoil.supabase.co';
   const env =
@@ -10,10 +17,43 @@ export default defineConfig(({ mode }) => {
       : {};
   const waitlistProxyTarget =
     env.VITE_WAITLIST_PROXY_TARGET || prodWaitlistTarget;
+  const siteUrl = getSiteUrl(env);
+  const projectRoot = path.dirname(fileURLToPath(import.meta.url));
 
   return {
     base: './',
-    plugins: [react()],
+    plugins: [
+      react(),
+      {
+        name: 'snapfresh-canonical-tags',
+        transformIndexHtml(html, context) {
+          if (!context.filename) {
+            return html;
+          }
+
+          const relativeInputPath = toPosixPath(path.relative(projectRoot, context.filename));
+          const page = getPublicPageByInputPath(relativeInputPath);
+
+          if (!page) {
+            return html;
+          }
+
+          return {
+            html,
+            tags: [
+              {
+                tag: 'link',
+                attrs: {
+                  rel: 'canonical',
+                  href: buildCanonicalUrl(siteUrl, page.pathname)
+                },
+                injectTo: 'head'
+              }
+            ]
+          };
+        }
+      }
+    ],
     server: {
       proxy: {
         '/api/register-waitlist': {
@@ -25,13 +65,12 @@ export default defineConfig(({ mode }) => {
     },
     build: {
       rollupOptions: {
-        input: {
-          main: new URL('./index.html', import.meta.url).pathname,
-          privacy: new URL('./privacy/index.html', import.meta.url).pathname,
-          terms: new URL('./terms/index.html', import.meta.url).pathname,
-          support: new URL('./support/index.html', import.meta.url).pathname,
-          dataDeletion: new URL('./data-deletion/index.html', import.meta.url).pathname
-        }
+        input: Object.fromEntries(
+          publicPages.map((page) => [
+            page.key,
+            path.resolve(projectRoot, page.inputPath)
+          ])
+        )
       }
     }
   };

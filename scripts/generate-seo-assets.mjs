@@ -1,23 +1,11 @@
 import { mkdir, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-
-const DEFAULT_SITE_URL = 'https://snapfresh.app';
-const PUBLIC_PATHS = ['/', '/privacy/', '/terms/', '/support/', '/data-deletion/'];
+import { buildCanonicalUrl, getSiteUrl, publicPages } from './seo-config.mjs';
 
 const currentDir = path.dirname(fileURLToPath(import.meta.url));
 const projectRoot = path.resolve(currentDir, '..');
 const publicDir = path.join(projectRoot, 'public');
-
-function normalizeSiteUrl(value) {
-  const trimmed = value.trim();
-
-  if (!trimmed) {
-    return DEFAULT_SITE_URL;
-  }
-
-  return trimmed.endsWith('/') ? trimmed.slice(0, -1) : trimmed;
-}
 
 function buildRobotsTxt(siteUrl) {
   const lines = [];
@@ -30,12 +18,10 @@ function buildRobotsTxt(siteUrl) {
 }
 
 function buildSitemapXml(siteUrl) {
-  const urlEntries = PUBLIC_PATHS.map((route) => {
-    const canonicalUrl = route === '/' ? `${siteUrl}/` : `${siteUrl}${route}`;
-
+  const urlEntries = publicPages.map((page) => {
     return [
       '  <url>',
-      `    <loc>${canonicalUrl}</loc>`,
+      `    <loc>${buildCanonicalUrl(siteUrl, page.pathname)}</loc>`,
       '  </url>'
     ].join('\n');
   }).join('\n');
@@ -50,9 +36,7 @@ function buildSitemapXml(siteUrl) {
 }
 
 async function main() {
-  const siteUrl = normalizeSiteUrl(
-    process.env.SITE_URL ?? process.env.VITE_SITE_URL ?? DEFAULT_SITE_URL
-  );
+  const siteUrl = getSiteUrl();
 
   await mkdir(publicDir, { recursive: true });
 
