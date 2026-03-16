@@ -4,7 +4,9 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
+    "generate:seo": "node ./scripts/generate-seo-assets.mjs",
     "dev": "vite",
+    "prebuild": "npm run generate:seo",
     "build": "tsc --noEmit && tsc --noEmit -p tsconfig.node.json && vite build",
     "preview": "vite preview"
   },

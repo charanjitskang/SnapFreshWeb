@@ -23,6 +23,12 @@ Build for deployment:
 npm run build
 ```
 
+Generate SEO assets without running a full build:
+
+```bash
+SITE_URL=https://snapfresh.app npm run generate:seo
+```
+
 ## Before publishing
 
 - Replace the placeholder support contact in `src/siteContent.ts`.
@@ -49,3 +55,19 @@ If you want the Vite proxy to hit a local Supabase stack, set:
 
 Requests are sent as JSON with `Content-Type: application/json`. The current payload includes
 `email`, `name`, `first_name`, `source`, and `created_at`.
+
+## SEO assets
+
+`robots.txt` and `sitemap.xml` are generated into `public/` by `npm run generate:seo`.
+The canonical production domain is `https://snapfresh.app`.
+Set `SITE_URL=https://snapfresh.app` in the build environment so the generated files stay aligned with production.
+
+Current sitemap coverage:
+
+- `/`
+- `/privacy/`
+- `/terms/`
+- `/support/`
+- `/data-deletion/`
+
+Implementation notes for the rest of the rollout are in `docs/seo-implementation-notes.md`.
