@@ -1,10 +1,5 @@
-import { StrictMode } from 'react';
-import { createRoot } from 'react-dom/client';
 import { TermsPage } from '../pages/TermsPage';
+import { mountApp } from './renderApp';
 import '../styles.css';
 
-createRoot(document.getElementById('root')!).render(
-  <StrictMode>
-    <TermsPage />
-  </StrictMode>
-);
+mountApp(<TermsPage />);

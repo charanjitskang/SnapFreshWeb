@@ -1,10 +1,5 @@
-import { StrictMode } from 'react';
-import { createRoot } from 'react-dom/client';
 import { PrivacyPage } from '../pages/PrivacyPage';
+import { mountApp } from './renderApp';
 import '../styles.css';
 
-createRoot(document.getElementById('root')!).render(
-  <StrictMode>
-    <PrivacyPage />
-  </StrictMode>
-);
+mountApp(<PrivacyPage />);

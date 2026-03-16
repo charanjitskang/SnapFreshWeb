@@ -62,6 +62,7 @@ Requests are sent as JSON with `Content-Type: application/json`. The current pay
 The canonical production domain is `https://snapfresh.app`.
 Set `SITE_URL=https://snapfresh.app` in the build environment so the generated files stay aligned with production.
 Canonical URLs for public pages are injected during the Vite build from the shared route config in `scripts/seo-config.mjs`.
+Public pages are also pre-rendered into the built HTML so crawlers can see meaningful body content before client-side hydration.
 
 Current sitemap coverage:
 
@@ -73,3 +74,4 @@ Current sitemap coverage:
 
 Implementation notes for the rest of the rollout are in `docs/seo-implementation-notes.md`.
 Canonical-specific notes are in `docs/canonical-implementation-notes.md`.
+Rendering-specific notes are in `docs/rendering-implementation-notes.md`.

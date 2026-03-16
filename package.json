@@ -5,9 +5,11 @@
   "type": "module",
   "scripts": {
     "generate:seo": "node ./scripts/generate-seo-assets.mjs",
+    "build:ssr": "vite build --ssr ./src/entries/ssr.tsx --outDir .ssr",
+    "prerender:dist": "npm run build:ssr && node ./scripts/prerender-dist.mjs",
     "dev": "vite",
     "prebuild": "npm run generate:seo",
-    "build": "tsc --noEmit && tsc --noEmit -p tsconfig.node.json && vite build",
+    "build": "tsc --noEmit && tsc --noEmit -p tsconfig.node.json && vite build && npm run prerender:dist",
     "preview": "vite preview"
   },
   "dependencies": {
