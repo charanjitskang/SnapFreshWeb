@@ -3,30 +3,53 @@ export type WaitlistSubmission = {
   email: string;
 };
 
-export type WaitlistMode = 'endpoint' | 'supabase' | 'local';
+export type WaitlistMode = 'edge-function' | 'local';
 
 export type WaitlistResult = {
   mode: WaitlistMode;
 };
 
 const LOCAL_STORAGE_KEY = 'snapfresh.waitlist.preview';
+const PROD_WAITLIST_ENDPOINT =
+  'https://rhaupemsfddxqigxjoil.supabase.co/functions/v1/register-waitlist';
+const DEV_WAITLIST_PROXY_PATH = '/api/register-waitlist';
 
 function createPayload(submission: WaitlistSubmission) {
   return {
     email: submission.email.trim().toLowerCase(),
+    name: submission.name.trim(),
     first_name: submission.name.trim(),
     source: 'marketing-site',
     created_at: new Date().toISOString()
   };
 }
 
-async function submitToEndpoint(payload: ReturnType<typeof createPayload>): Promise<WaitlistResult> {
-  const endpoint = import.meta.env.VITE_WAITLIST_ENDPOINT_URL?.trim();
+function getWaitlistEndpoint() {
+  const configuredEndpoint = import.meta.env.VITE_WAITLIST_ENDPOINT_URL?.trim();
 
-  if (!endpoint) {
-    throw new Error('Waitlist endpoint is not configured.');
+  if (configuredEndpoint) {
+    return configuredEndpoint;
   }
 
+  return import.meta.env.DEV ? DEV_WAITLIST_PROXY_PATH : PROD_WAITLIST_ENDPOINT;
+}
+
+async function extractErrorMessage(response: Response) {
+  const contentType = response.headers.get('content-type') || '';
+
+  if (contentType.includes('application/json')) {
+    const body = (await response.json()) as { error?: string; message?: string };
+    return body.message || body.error || 'Waitlist request failed.';
+  }
+
+  const body = await response.text();
+  return body || 'Waitlist request failed.';
+}
+
+async function submitToEdgeFunction(
+  payload: ReturnType<typeof createPayload>
+): Promise<WaitlistResult> {
+  const endpoint = getWaitlistEndpoint();
   const response = await fetch(endpoint, {
     method: 'POST',
     headers: {
@@ -36,43 +59,10 @@ async function submitToEndpoint(payload: ReturnType<typeof createPayload>): Prom
   });
 
   if (!response.ok) {
-    const body = await response.text();
-    throw new Error(body || 'Waitlist request failed.');
+    throw new Error(await extractErrorMessage(response));
   }
 
-  return { mode: 'endpoint' };
-}
-
-async function submitToSupabase(payload: ReturnType<typeof createPayload>): Promise<WaitlistResult> {
-  const supabaseUrl =
-    import.meta.env.VITE_WAITLIST_SUPABASE_URL?.trim() ??
-    import.meta.env.VITE_SUPABASE_URL?.trim();
-  const supabaseAnonKey =
-    import.meta.env.VITE_WAITLIST_SUPABASE_ANON_KEY?.trim() ??
-    import.meta.env.VITE_SUPABASE_ANON_KEY?.trim();
-  const table = import.meta.env.VITE_WAITLIST_TABLE?.trim() || 'waitlist_submissions';
-
-  if (!supabaseUrl || !supabaseAnonKey) {
-    throw new Error('Supabase waitlist configuration is incomplete.');
-  }
-
-  const response = await fetch(`${supabaseUrl}/rest/v1/${table}`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      apikey: supabaseAnonKey,
-      Authorization: `Bearer ${supabaseAnonKey}`,
-      Prefer: 'return=minimal'
-    },
-    body: JSON.stringify(payload)
-  });
-
-  if (!response.ok) {
-    const body = await response.text();
-    throw new Error(body || 'Supabase waitlist request failed.');
-  }
-
-  return { mode: 'supabase' };
+  return { mode: 'edge-function' };
 }
 
 function submitLocally(payload: ReturnType<typeof createPayload>): WaitlistResult {
@@ -86,20 +76,9 @@ function submitLocally(payload: ReturnType<typeof createPayload>): WaitlistResul
 export async function submitWaitlist(submission: WaitlistSubmission): Promise<WaitlistResult> {
   const payload = createPayload(submission);
 
-  if (import.meta.env.VITE_WAITLIST_ENDPOINT_URL) {
-    return submitToEndpoint(payload);
-  }
-
-  if (
-    import.meta.env.VITE_WAITLIST_SUPABASE_URL ||
-    import.meta.env.VITE_SUPABASE_URL
-  ) {
-    return submitToSupabase(payload);
-  }
-
-  if (import.meta.env.DEV) {
+  if (import.meta.env.DEV && import.meta.env.VITE_WAITLIST_DISABLE_BACKEND === 'true') {
     return submitLocally(payload);
   }
 
-  throw new Error('Waitlist is not configured for this deployment yet.');
+  return submitToEdgeFunction(payload);
 }
