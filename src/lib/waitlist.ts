@@ -1,8 +1,6 @@
 export type WaitlistSubmission = {
+  name: string;
   email: string;
-  firstName: string;
-  goal: string;
-  platform: string;
 };
 
 export type WaitlistMode = 'endpoint' | 'supabase' | 'local';
@@ -16,9 +14,7 @@ const LOCAL_STORAGE_KEY = 'snapfresh.waitlist.preview';
 function createPayload(submission: WaitlistSubmission) {
   return {
     email: submission.email.trim().toLowerCase(),
-    first_name: submission.firstName.trim(),
-    goal: submission.goal,
-    platform: submission.platform,
+    first_name: submission.name.trim(),
     source: 'marketing-site',
     created_at: new Date().toISOString()
   };

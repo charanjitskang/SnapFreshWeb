@@ -2,34 +2,7 @@ import type { CSSProperties, ReactNode } from 'react';
 import { PlateMascot } from '../components/PlateMascot';
 import { SiteLayout } from '../components/SiteLayout';
 import { WaitlistForm } from '../components/WaitlistForm';
-import {
-  siteConfig,
-  toPageHref,
-  type SitePath
-} from '../siteContent';
-
-const appStoreCards = [
-  {
-    title: 'Privacy Policy',
-    href: '/privacy/' as SitePath,
-    body: 'Clear details on how SnapFresh handles photos, account data, and storage.'
-  },
-  {
-    title: 'Terms of Use',
-    href: '/terms/' as SitePath,
-    body: 'Plain-language terms for AI meal insights, accounts, and premium features.'
-  },
-  {
-    title: 'Support',
-    href: '/support/' as SitePath,
-    body: 'A simple support page for users who need help.'
-  },
-  {
-    title: 'Data Deletion',
-    href: '/data-deletion/' as SitePath,
-    body: 'Step-by-step instructions for account and data deletion requests.'
-  }
-];
+import { siteConfig } from '../siteContent';
 
 const experienceSignals = [
   { value: 'Snap in seconds', label: 'Take a photo and keep going' },
@@ -268,15 +241,6 @@ export function HomePage() {
                 <li key={item}>{item}</li>
               ))}
             </ul>
-
-            <div className="resource-grid">
-              {appStoreCards.map((card) => (
-                <a key={card.title} className="resource-card" href={toPageHref('/', card.href)}>
-                  <strong>{card.title}</strong>
-                  <span>{card.body}</span>
-                </a>
-              ))}
-            </div>
           </div>
         </div>
       </section>

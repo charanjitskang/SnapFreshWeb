@@ -2,10 +2,12 @@ import { type FormEvent, useState } from 'react';
 import { submitWaitlist } from '../lib/waitlist';
 
 type FormState = {
+  name: string;
   email: string;
 };
 
 const initialFormState: FormState = {
+  name: '',
   email: ''
 };
 
@@ -37,10 +39,8 @@ export function WaitlistForm() {
 
     try {
       const result = await submitWaitlist({
+        name: form.name,
         email: form.email,
-        firstName: '',
-        goal: '',
-        platform: ''
       });
       setForm(initialFormState);
       setStatus({
@@ -65,6 +65,20 @@ export function WaitlistForm() {
   return (
     <form className="waitlist-form-card" onSubmit={handleSubmit}>
       <div className="waitlist-form-grid">
+        <label className="field">
+          <input
+            className="field-input"
+            type="text"
+            name="name"
+            autoComplete="name"
+            placeholder="Name (optional)"
+            value={form.name}
+            onChange={(event) =>
+              setForm((current) => ({ ...current, name: event.target.value }))
+            }
+          />
+        </label>
+
         <label className="field">
           <input
             className="field-input"
