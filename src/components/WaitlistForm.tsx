@@ -1,4 +1,10 @@
 import { type FormEvent, useState } from 'react';
+import {
+  trackWaitlistFormStart,
+  trackWaitlistSubmitted,
+  trackWaitlistSubmissionFailed,
+  trackWaitlistValidationError
+} from '../lib/analytics';
 import { submitWaitlist } from '../lib/waitlist';
 
 type FormState = {
@@ -27,6 +33,7 @@ export function WaitlistForm() {
     event.preventDefault();
 
     if (!isValidEmail(form.email)) {
+      trackWaitlistValidationError('invalid_email');
       setStatus({
         tone: 'error',
         message: 'Enter a valid email address to join the waitlist.'
@@ -42,6 +49,7 @@ export function WaitlistForm() {
         name: form.name,
         email: form.email,
       });
+      trackWaitlistSubmitted(result.mode);
       setForm(initialFormState);
       setStatus({
         tone: 'success',
@@ -51,6 +59,7 @@ export function WaitlistForm() {
             : "You're on the list. We'll send early access updates when invites open."
       });
     } catch (error) {
+      trackWaitlistSubmissionFailed('request_failed');
       const message =
         error instanceof Error ? error.message : 'Something went wrong. Please try again.';
       setStatus({
@@ -73,9 +82,10 @@ export function WaitlistForm() {
             autoComplete="name"
             placeholder="Name (optional)"
             value={form.name}
-            onChange={(event) =>
-              setForm((current) => ({ ...current, name: event.target.value }))
-            }
+            onChange={(event) => {
+              trackWaitlistFormStart();
+              setForm((current) => ({ ...current, name: event.target.value }));
+            }}
           />
         </label>
 
@@ -87,9 +97,10 @@ export function WaitlistForm() {
             autoComplete="email"
             placeholder="Enter your email"
             value={form.email}
-            onChange={(event) =>
-              setForm((current) => ({ ...current, email: event.target.value }))
-            }
+            onChange={(event) => {
+              trackWaitlistFormStart();
+              setForm((current) => ({ ...current, email: event.target.value }));
+            }}
             required
           />
         </label>

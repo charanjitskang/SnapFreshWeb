@@ -82,6 +82,7 @@ export const privacySections: SectionContent[] = [
       'Account information such as your email address, name, profile image, and account identifiers when you sign in or create an account.',
       'Meal analysis inputs such as photos you capture or choose from your library, optional notes you provide, and the resulting detected items, scores, captions, and nutrition estimates.',
       'Profile and goal information such as height, weight, date of birth, gender, calorie goals, macro goals, and related preference data, if you choose to enter it.',
+      'Website and in-app usage information such as page views, screen views, feature interactions, waitlist activity, and support contact actions used to understand product usage and improve the service.',
       'Usage and settings information such as language, theme, water logging preferences, subscription state flags, and interaction history stored in the app.',
       'Support communications you send us, including the email address and message content you use when asking for help or requesting data deletion.'
     ]
@@ -108,7 +109,7 @@ export const privacySections: SectionContent[] = [
   {
     title: '5. Service Providers and Infrastructure',
     paragraphs: [
-      'SnapFresh relies on third-party services for core functionality. Account authentication is provided through Clerk, and app data services are provided through Supabase.',
+      'SnapFresh relies on third-party services for core functionality. Account authentication is provided through Clerk, app data services are provided through Supabase, and product analytics may be provided through PostHog.',
       'Meal analysis requests may include meal photos or photo-based content sent to backend services that return structured food insights and nutrition estimates.'
     ]
   },

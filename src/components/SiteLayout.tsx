@@ -1,4 +1,9 @@
 import { useEffect, useState, type PropsWithChildren, type ReactNode } from 'react';
+import {
+  trackSupportContactClick,
+  trackWaitlistCtaClick,
+  trackWaitlistSectionView
+} from '../lib/analytics';
 import { PlateMascot } from './PlateMascot';
 import { siteConfig, toPageHref, type SitePath } from '../siteContent';
 
@@ -32,6 +37,10 @@ export function SiteLayout({
     const observer = new IntersectionObserver(
       ([entry]) => {
         setIsWaitlistVisible(entry.isIntersecting);
+
+        if (entry.isIntersecting) {
+          trackWaitlistSectionView();
+        }
       },
       {
         threshold: 0.2
@@ -93,7 +102,11 @@ export function SiteLayout({
           </div>
           <div>
             <div className="footer-title">Support</div>
-            <a className="footer-mail" href={`mailto:${siteConfig.contactEmail}`}>
+            <a
+              className="footer-mail"
+              href={`mailto:${siteConfig.contactEmail}`}
+              onClick={() => trackSupportContactClick('footer')}
+            >
               {siteConfig.contactEmail}
             </a>
           </div>
@@ -105,7 +118,11 @@ export function SiteLayout({
       >
         <div className="container floating-waitlist-inner">
           <p className="floating-waitlist-copy">Coming soon this month...</p>
-          <a className="button button-primary floating-waitlist-button" href={waitlistHref}>
+          <a
+            className="button button-primary floating-waitlist-button"
+            href={waitlistHref}
+            onClick={() => trackWaitlistCtaClick('floating_bar')}
+          >
             Join the waitlist
           </a>
         </div>

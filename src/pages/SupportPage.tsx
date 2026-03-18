@@ -1,4 +1,5 @@
 import { SiteLayout } from '../components/SiteLayout';
+import { trackSupportContactClick } from '../lib/analytics';
 import { siteConfig, supportTopics, toPageHref } from '../siteContent';
 
 export function SupportPage() {
@@ -9,7 +10,11 @@ export function SupportPage() {
       pageTitle="Support for SnapFresh users"
       pageIntro="Need help with SnapFresh? Use this page to contact support, review common issue categories, and find privacy and data deletion resources."
       pageActions={
-        <a className="button button-primary" href={`mailto:${siteConfig.contactEmail}`}>
+        <a
+          className="button button-primary"
+          href={`mailto:${siteConfig.contactEmail}`}
+          onClick={() => trackSupportContactClick('support_page_hero')}
+        >
           Email support
         </a>
       }

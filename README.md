@@ -56,6 +56,30 @@ If you want the Vite proxy to hit a local Supabase stack, set:
 Requests are sent as JSON with `Content-Type: application/json`. The current payload includes
 `email`, `name`, `first_name`, `source`, and `created_at`.
 
+## Analytics configuration
+
+The marketing site can send analytics to the same PostHog project as the app.
+
+- Required: `VITE_POSTHOG_API_KEY`
+- Optional: `VITE_POSTHOG_HOST`
+
+Recommended values if you want the website and Expo app in the same PostHog project:
+
+- `VITE_POSTHOG_API_KEY` = the same value as `EXPO_PUBLIC_POSTHOG_API_KEY`
+- `VITE_POSTHOG_HOST` = the same value as `EXPO_PUBLIC_POSTHOG_HOST`
+
+If `VITE_POSTHOG_API_KEY` is not set, website analytics stay disabled.
+
+The site currently tracks:
+
+- `waitlist_cta_clicked`
+- `waitlist_section_viewed`
+- `waitlist_form_started`
+- `waitlist_validation_failed`
+- `waitlist_submitted`
+- `waitlist_submission_failed`
+- `support_contact_clicked`
+
 ## SEO assets
 
 `robots.txt` and `sitemap.xml` are generated into `public/` by `npm run generate:seo`.
