@@ -4,7 +4,13 @@ import { SiteLayout } from "../components/SiteLayout";
 import { WaitlistForm } from "../components/WaitlistForm";
 import { siteConfig, toAssetHref } from "../siteContent";
 
-const experienceSignals = [
+type ExperienceSignal = {
+  value: string;
+  label: string;
+  bullets?: string[];
+};
+
+const experienceSignals: ExperienceSignal[] = [
   {
     value: "Snap it",
     label: "Take photo to analyze for healthy balance, nutrients and calories.",
