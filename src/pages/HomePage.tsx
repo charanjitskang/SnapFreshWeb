@@ -1,8 +1,8 @@
-import type { CSSProperties, ReactNode } from 'react';
+import type { CSSProperties } from 'react';
 import { PlateMascot } from '../components/PlateMascot';
 import { SiteLayout } from '../components/SiteLayout';
 import { WaitlistForm } from '../components/WaitlistForm';
-import { siteConfig } from '../siteContent';
+import { siteConfig, toAssetHref } from '../siteContent';
 
 const experienceSignals = [
   { value: 'Snap in seconds', label: 'Take a photo and keep going' },
@@ -52,27 +52,6 @@ const launchNotes = [
   `Questions? Reach us at ${siteConfig.contactEmail}.`
 ];
 
-function DeviceFrame({
-  label,
-  className,
-  children
-}: {
-  label: string;
-  className?: string;
-  children: ReactNode;
-}) {
-  return (
-    <div className={['device-frame', className].filter(Boolean).join(' ')}>
-      <div className="device-top">
-        <span>{label}</span>
-        <span>9:41</span>
-      </div>
-      <div className="device-notch" />
-      <div className="device-screen">{children}</div>
-    </div>
-  );
-}
-
 function ScoreRing({ score, label }: { score: number; label: string }) {
   const style = { '--score-angle': `${Math.round(score * 3.6)}deg` } as CSSProperties;
 
@@ -87,25 +66,26 @@ function ScoreRing({ score, label }: { score: number; label: string }) {
 }
 
 function CapturePreview() {
+  const screenshotSrc = toAssetHref('/', 'scanning_food_macro.png');
+
   return (
-    <DeviceFrame label="Capture" className="device-frame-hero">
-      <div className="device-brand">
-        <span>Snap</span>
-        <strong>Fresh</strong>
-      </div>
-      <div className="scan-stage">
-        <PlateMascot className="scan-stage-plate" label="SnapFresh plate mascot" />
-        <div className="scan-stage-actions">
-          <span className="scan-stage-button is-active">Camera</span>
-          <span className="scan-stage-button">Gallery</span>
+    <div className="hero-screenshot-panel">
+      <div className="hero-screenshot-stage">
+        <div className="hero-screenshot-frame">
+          <img
+            className="hero-screenshot"
+            src={screenshotSrc}
+            alt="SnapFresh analyzing a bowl meal with identified items and nutrient checks"
+            loading="eager"
+            decoding="async"
+          />
         </div>
+        <PlateMascot className="hero-floating-plate" hideArms label="SnapFresh plate mascot" />
       </div>
-      <div className="device-note-card">
-        <span className="device-note-label">Meal note</span>
-        <p>Vegetable rice bowl with grilled chicken and yogurt sauce.</p>
+      <div className="hero-screenshot-caption">
+        Real analyze screen from the app.
       </div>
-      <div className="device-action">Analyze meal</div>
-    </DeviceFrame>
+    </div>
   );
 }
 
@@ -115,8 +95,7 @@ export function HomePage() {
       <section className="landing-hero">
         <div className="container landing-grid">
           <div className="hero-copy">
-            <div className="eyebrow">Healthy eating without the obsession</div>
-            <h1>See how balanced your plate is.</h1>
+            <h1>Understand your food, not just calories.</h1>
             <p className="hero-lede">
               SnapFresh scores your meal for nutrient balance and gives you insights and
               suggestions to help you build a more balanced diet.
