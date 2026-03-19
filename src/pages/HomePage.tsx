@@ -1,59 +1,44 @@
-import type { CSSProperties } from 'react';
-import { PlateMascot } from '../components/PlateMascot';
-import { SiteLayout } from '../components/SiteLayout';
-import { WaitlistForm } from '../components/WaitlistForm';
-import { siteConfig, toAssetHref } from '../siteContent';
+import type { CSSProperties } from "react";
+import { PlateMascot } from "../components/PlateMascot";
+import { SiteLayout } from "../components/SiteLayout";
+import { WaitlistForm } from "../components/WaitlistForm";
+import { siteConfig, toAssetHref } from "../siteContent";
 
 const experienceSignals = [
-  { value: 'Snap in seconds', label: 'Take a photo and keep going' },
-  { value: 'Balance first', label: 'Calories are context, not the whole story' },
-  { value: 'Calories + nutrients', label: 'See the numbers without losing the bigger picture' },
   {
-    value: 'Share',
-    label: 'Choose from multiple templates to share your plate',
-    bullets: [
-      'Score and balance',
-      'Calories and nutrients',
-      'Guess my score/calories',
-      'Liquified glass effects'
-    ]
-  }
-];
-
-const storySteps = [
-  {
-    step: '01',
-    title: 'Snap the meal',
-    body: 'Take a photo, add a note if you want, and move on.'
+    value: "Snap it",
+    label: "Take photo to analyze for healthy balance, nutrients and calories.",
   },
   {
-    step: '02',
-    title: 'See what stands out',
-    body: 'Get a quick read on balance, what the meal may be missing, and where calories fit in.'
+    value: "Score it",
+    label:
+      "Score based on established nutrition frameworks like NOVA and modern dietary guidelines.",
   },
   {
-    step: '03',
-    title: 'Stay on track',
-    body: 'Meals, hydration, and progress stay together so healthy choices are easier to repeat.'
-  }
+    value: "Share it",
+    label:
+      "See vitality score, calories, nutrients. Proudly share your healthy meal photo or roast an unhealthy one with friends.",
+  },
 ];
 
 const foodScoreFactors = [
-  'Vegetable & fruit content',
-  'Protein balance',
-  'Carb quality',
-  'Overall nutrition composition'
+  "Vegetable & fruit content",
+  "Protein balance",
+  "Carb quality",
+  "Overall nutrition composition",
 ];
 
 const launchNotes = [
-  'Quick and easy onboarding without a long questionnaire.',
-  'Customize the app around what matters to you; choose to see only the features you use.',
-  'Built to encourage balanced eating, not obsessive tracking.',
-  `Questions? Reach us at ${siteConfig.contactEmail}.`
+  "Quick and easy onboarding without a long questionnaire.",
+  "Customize the app around what matters to you; choose to see only the features you use.",
+  "Built to encourage balanced eating, not obsessive tracking.",
+  `Questions? Reach us at ${siteConfig.contactEmail}.`,
 ];
 
 function ScoreRing({ score, label }: { score: number; label: string }) {
-  const style = { '--score-angle': `${Math.round(score * 3.6)}deg` } as CSSProperties;
+  const style = {
+    "--score-angle": `${Math.round(score * 3.6)}deg`,
+  } as CSSProperties;
 
   return (
     <div className="mini-score-ring" style={style}>
@@ -66,24 +51,48 @@ function ScoreRing({ score, label }: { score: number; label: string }) {
 }
 
 function CapturePreview() {
-  const screenshotSrc = toAssetHref('/', 'scanning_food_macro.png');
+  const screenshots = [
+    {
+      src: toAssetHref("/", "scanning_food_macro.png"),
+      alt: "SnapFresh analyzing a bowl meal with identified items and nutrient checks",
+    },
+    {
+      src: toAssetHref("/", "calories_macros_share_food.png"),
+      alt: "SnapFresh share screen showing calories, macros, and meal score details",
+    },
+  ];
 
   return (
     <div className="hero-screenshot-panel">
-      <div className="hero-screenshot-stage">
-        <div className="hero-screenshot-frame">
-          <img
-            className="hero-screenshot"
-            src={screenshotSrc}
-            alt="SnapFresh analyzing a bowl meal with identified items and nutrient checks"
-            loading="eager"
-            decoding="async"
-          />
-        </div>
-        <PlateMascot className="hero-floating-plate" hideArms label="SnapFresh plate mascot" />
+      <div className="hero-screenshot-grid">
+        {screenshots.map((screenshot, index) => (
+          <div
+            key={screenshot.src}
+            className={`hero-screenshot-stage ${
+              index === 0 ? "is-primary" : "is-secondary"
+            }`}
+          >
+            <div className="hero-screenshot-frame">
+              <img
+                className="hero-screenshot"
+                src={screenshot.src}
+                alt={screenshot.alt}
+                loading={index === 0 ? "eager" : "lazy"}
+                decoding="async"
+              />
+            </div>
+            {index === 0 ? (
+              <PlateMascot
+                className="hero-floating-plate"
+                hideArms
+                label="SnapFresh plate mascot"
+              />
+            ) : null}
+          </div>
+        ))}
       </div>
       <div className="hero-screenshot-caption">
-        Real analyze screen from the app.
+        Real screens from the app.
       </div>
     </div>
   );
@@ -97,8 +106,8 @@ export function HomePage() {
           <div className="hero-copy">
             <h1>Understand your food, not just calories.</h1>
             <p className="hero-lede">
-              SnapFresh scores your meal for nutrient balance and gives you insights and
-              suggestions to help you build a more balanced diet.
+              SnapFresh scores your meal for nutrient balance and gives you
+              insights and suggestions to help you build a more balanced diet.
             </p>
           </div>
 
@@ -128,41 +137,18 @@ export function HomePage() {
         </div>
       </section>
 
-      <section className="content-block story-block" id="preview">
-        <div className="container">
-          <div className="section-heading">
-            <div className="eyebrow">How it fits into a real day</div>
-            <h2>From one photo to a better next choice.</h2>
-            <p className="section-copy">
-              SnapFresh is built to make balanced eating easier to notice, act on, and keep up
-              over time.
-            </p>
-          </div>
-
-          <div className="story-grid">
-            {storySteps.map((item) => (
-              <article key={item.step} className="story-card">
-                <span className="story-step">{item.step}</span>
-                <h3>{item.title}</h3>
-                <p>{item.body}</p>
-              </article>
-            ))}
-          </div>
-        </div>
-      </section>
-
       <section className="content-block food-score-block">
         <div className="container food-score-grid">
           <div className="section-heading food-score-copy">
             <div className="eyebrow">Food Quality Score</div>
-            <h2>Understand your food, not just its calories.</h2>
+            <h2>Cutting calories shouldn't mean cutting on nutrients.</h2>
             <p className="section-copy">
-              Calories only tell part of the story. Two meals can have the same calorie count and
-              offer very different nutrition.
+              Calories only tell part of the story. Two meals can have the same
+              calorie count and offer very different nutrition.
             </p>
             <p className="section-copy">
-              SnapFresh gives each meal a Food Quality Score so you can quickly see its balance,
-              variety, and overall quality.
+              SnapFresh helps you maximize nutrient intake from yoour plate even
+              when you cut on calories.
             </p>
           </div>
 
@@ -193,8 +179,8 @@ export function HomePage() {
             <div className="food-score-summary">
               <ScoreRing score={84} label="Healthy" />
               <p>
-                The score is meant to highlight balance, quality, and what your meal may be
-                missing, not just whether the calorie number is low.
+                The score is meant to highlight balance, quality, and what your
+                meal may be missing, not just whether the calorie number is low.
               </p>
             </div>
           </div>
