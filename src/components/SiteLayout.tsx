@@ -1,11 +1,16 @@
-import { useEffect, useState, type PropsWithChildren, type ReactNode } from 'react';
+import {
+  useEffect,
+  useState,
+  type PropsWithChildren,
+  type ReactNode,
+} from "react";
 import {
   trackSupportContactClick,
   trackWaitlistCtaClick,
-  trackWaitlistSectionView
-} from '../lib/analytics';
-import { PlateMascot } from './PlateMascot';
-import { siteConfig, toPageHref, type SitePath } from '../siteContent';
+  trackWaitlistSectionView,
+} from "../lib/analytics";
+import { PlateMascot } from "./PlateMascot";
+import { siteConfig, toPageHref, type SitePath } from "../siteContent";
 
 type SiteLayoutProps = PropsWithChildren<{
   activePath: SitePath;
@@ -21,13 +26,13 @@ export function SiteLayout({
   pageIntro,
   pageBadge,
   pageActions,
-  children
+  children,
 }: SiteLayoutProps) {
-  const waitlistHref = `${toPageHref(activePath, '/')}#waitlist`;
+  const waitlistHref = `${toPageHref(activePath, "/")}#waitlist`;
   const [isWaitlistVisible, setIsWaitlistVisible] = useState(false);
 
   useEffect(() => {
-    const waitlistSection = document.getElementById('waitlist');
+    const waitlistSection = document.getElementById("waitlist");
 
     if (!waitlistSection) {
       setIsWaitlistVisible(false);
@@ -43,8 +48,8 @@ export function SiteLayout({
         }
       },
       {
-        threshold: 0.2
-      }
+        threshold: 0.2,
+      },
     );
 
     observer.observe(waitlistSection);
@@ -61,8 +66,12 @@ export function SiteLayout({
 
       <header className="site-header">
         <div className="container brand-row">
-          <a className="brand" href={toPageHref(activePath, '/')}>
-            <PlateMascot className="brand-mark" hideArms label="SnapFresh plate logo" />
+          <a className="brand" href={toPageHref(activePath, "/")}>
+            <PlateMascot
+              className="brand-mark"
+              hideArms
+              label="SnapFresh plate logo"
+            />
             <div>
               <div className="brand-name" aria-label={siteConfig.appName}>
                 <span>Snap</span>
@@ -82,7 +91,9 @@ export function SiteLayout({
               {pageTitle ? <h1 className="page-title">{pageTitle}</h1> : null}
               {pageIntro ? <p className="page-intro">{pageIntro}</p> : null}
             </div>
-            {pageActions ? <div className="page-hero-actions">{pageActions}</div> : null}
+            {pageActions ? (
+              <div className="page-hero-actions">{pageActions}</div>
+            ) : null}
           </div>
         </section>
       )}
@@ -94,10 +105,12 @@ export function SiteLayout({
           <div>
             <div className="footer-title">Links</div>
             <div className="footer-links">
-              <a href={toPageHref(activePath, '/privacy/')}>Privacy Policy</a>
-              <a href={toPageHref(activePath, '/terms/')}>Terms of Use</a>
-              <a href={toPageHref(activePath, '/support/')}>Support</a>
-              <a href={toPageHref(activePath, '/data-deletion/')}>Data deletion</a>
+              <a href={toPageHref(activePath, "/privacy/")}>Privacy Policy</a>
+              <a href={toPageHref(activePath, "/terms/")}>Terms of Use</a>
+              <a href={toPageHref(activePath, "/support/")}>Support</a>
+              <a href={toPageHref(activePath, "/data-deletion/")}>
+                Data deletion
+              </a>
             </div>
           </div>
           <div>
@@ -105,7 +118,7 @@ export function SiteLayout({
             <a
               className="footer-mail"
               href={`mailto:${siteConfig.contactEmail}`}
-              onClick={() => trackSupportContactClick('footer')}
+              onClick={() => trackSupportContactClick("footer")}
             >
               {siteConfig.contactEmail}
             </a>
@@ -114,14 +127,18 @@ export function SiteLayout({
       </footer>
 
       <div
-        className={isWaitlistVisible ? 'floating-waitlist-bar is-hidden' : 'floating-waitlist-bar'}
+        className={
+          isWaitlistVisible
+            ? "floating-waitlist-bar is-hidden"
+            : "floating-waitlist-bar"
+        }
       >
         <div className="container floating-waitlist-inner">
-          <p className="floating-waitlist-copy">Coming soon this month...</p>
+          <p className="floating-waitlist-copy">For early bird offers...</p>
           <a
             className="button button-primary floating-waitlist-button"
             href={waitlistHref}
-            onClick={() => trackWaitlistCtaClick('floating_bar')}
+            onClick={() => trackWaitlistCtaClick("floating_bar")}
           >
             Join the waitlist
           </a>
@@ -134,7 +151,7 @@ export function SiteLayout({
 export function ContentSection({
   title,
   paragraphs,
-  bullets
+  bullets,
 }: {
   title: string;
   paragraphs?: string[];
