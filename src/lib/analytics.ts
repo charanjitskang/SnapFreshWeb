@@ -27,8 +27,14 @@ let hasTrackedWaitlistSectionView = false;
 let hasTrackedWaitlistFormStart = false;
 
 function getPostHogConfig() {
-  const apiKey = import.meta.env.VITE_POSTHOG_API_KEY?.trim();
-  const host = import.meta.env.VITE_POSTHOG_HOST?.trim() || DEFAULT_POSTHOG_HOST;
+  const apiKey = (
+    import.meta.env.VITE_POSTHOG_API_KEY ??
+    import.meta.env.EXPO_PUBLIC_POSTHOG_API_KEY
+  )?.trim();
+  const host = (
+    import.meta.env.VITE_POSTHOG_HOST ??
+    import.meta.env.EXPO_PUBLIC_POSTHOG_HOST
+  )?.trim() || DEFAULT_POSTHOG_HOST;
 
   return {
     apiKey,

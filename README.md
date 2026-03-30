@@ -96,6 +96,44 @@ Current sitemap coverage:
 - `/support/`
 - `/data-deletion/`
 
+## Admin dashboard bootstrap
+
+`/admin/` is an internal page. It is bundled with the site, but it is not added to
+the public sitemap and the page itself sends `noindex`.
+
+Phase 1 adds:
+
+- Clerk sign-in for the admin page
+- Supabase-backed allowlist enforcement through `public.admin_users`
+- a protected `admin-session` edge function that returns the first operational snapshot
+- a copyable bootstrap summary for fast debugging and AI handoff
+
+Required website env vars:
+
+- `VITE_CLERK_PUBLISHABLE_KEY`
+- `VITE_SUPABASE_URL`
+- `VITE_SUPABASE_ANON_KEY`
+
+Use the same Clerk instance and Supabase project as the app environment you want
+to observe.
+
+To add the first admin after the migration is applied, insert a row similar to:
+
+```sql
+insert into public.admin_users (
+  clerk_user_id,
+  email,
+  display_name,
+  role
+)
+values (
+  'user_...',
+  'admin@example.com',
+  'Your Name',
+  'owner'
+);
+```
+
 Implementation notes for the rest of the rollout are in `docs/seo-implementation-notes.md`.
 Canonical-specific notes are in `docs/canonical-implementation-notes.md`.
 Rendering-specific notes are in `docs/rendering-implementation-notes.md`.

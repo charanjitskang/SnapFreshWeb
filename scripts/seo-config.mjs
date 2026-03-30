@@ -28,6 +28,16 @@ export const publicPages = [
   }
 ];
 
+export const internalPages = [
+  {
+    key: 'admin',
+    inputPath: 'admin/index.html',
+    pathname: '/admin/'
+  }
+];
+
+export const buildPages = [...publicPages, ...internalPages];
+
 export function normalizeSiteUrl(value) {
   const trimmed = value.trim();
 
