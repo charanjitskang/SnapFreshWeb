@@ -337,7 +337,7 @@ function AlertsCard({ session }: { session: AdminSessionResponse }) {
         </p>
       ) : (
         <div className="admin-alert-list">
-          {session.snapshot.activeAlerts.map((alert) => (
+          {session.snapshot.activeAlerts.filter((alert) => alert.functionName !== "admin-dashboard").map((alert) => (
             <article key={alert.functionName} className="admin-alert-card">
               <div className="admin-alert-header">
                 <h3>{alert.functionName}</h3>
@@ -673,7 +673,10 @@ function IncidentSection({
 
       <div className="admin-alert-list">
         {incidents?.incidents.length ? (
-          incidents.incidents.map((incident) => (
+          [...incidents.incidents]
+            .filter((incident) => !incident.incidentKey.includes("admin-dashboard"))
+            .sort((a, b) => new Date(b.lastSeenAt).getTime() - new Date(a.lastSeenAt).getTime())
+            .map((incident) => (
             <IncidentCard
               key={incident.incidentKey}
               canManageIncidentState={canManageIncidentState}
@@ -769,7 +772,7 @@ function FailureSection({
 
       <div className="admin-alert-list">
         {failures?.failures.length ? (
-          failures.failures.map((failure) => (
+          failures.failures.filter((failure) => failure.functionName !== "admin-dashboard").map((failure) => (
             <article key={`${failure.requestId}:${failure.occurredAt}`} className="admin-alert-card">
               <div className="admin-alert-header">
                 <div>
@@ -874,7 +877,6 @@ function DiagnosticsSection({
             <option value="all">All levels</option>
             <option value="error">Error</option>
             <option value="warning">Warning</option>
-            <option value="info">Info</option>
           </select>
         </label>
 
@@ -1061,7 +1063,7 @@ function AdminAccessPanel() {
   const [failureFunctionFilter, setFailureFunctionFilter] = useState("all");
   const [failureRefreshToken, setFailureRefreshToken] = useState(0);
 
-  const [diagnosticsLevel, setDiagnosticsLevel] = useState("all");
+  const [diagnosticsLevel, setDiagnosticsLevel] = useState("warning");
   const [diagnosticsPlatform, setDiagnosticsPlatform] = useState("all");
   const [fatalOnly, setFatalOnly] = useState(false);
   const [diagnosticsRefreshToken, setDiagnosticsRefreshToken] = useState(0);
@@ -1202,7 +1204,7 @@ function AdminAccessPanel() {
         ...recentFailures.failures.map((failure) => failure.functionName),
         ...(failureFunctionFilter === "all" ? [] : [failureFunctionFilter]),
       ]),
-    ).sort()
+    ).filter((name) => name !== "admin-dashboard").sort()
     : [];
 
   const platformOptions = diagnosticsEvents

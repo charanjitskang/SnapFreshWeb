@@ -1,8 +1,7 @@
 import type { CSSProperties } from "react";
 import { PlateMascot } from "../components/PlateMascot";
 import { SiteLayout } from "../components/SiteLayout";
-import { WaitlistForm } from "../components/WaitlistForm";
-import { siteConfig, toAssetHref } from "../siteContent";
+import { toAssetHref } from "../siteContent";
 
 type ExperienceSignal = {
   value: string;
@@ -32,13 +31,6 @@ const foodScoreFactors = [
   "Protein balance",
   "Carb quality",
   "Overall nutrition composition",
-];
-
-const launchNotes = [
-  "Quick and easy onboarding without a long questionnaire.",
-  "Customize the app around what matters to you; choose to see only the features you use.",
-  "Built to encourage balanced eating, not obsessive tracking.",
-  `Questions? Reach us at ${siteConfig.contactEmail}.`,
 ];
 
 function ScoreRing({ score, label }: { score: number; label: string }) {
@@ -193,28 +185,6 @@ export function HomePage() {
         </div>
       </section>
 
-      <section className="content-block launch-block" id="waitlist">
-        <div className="container launch-grid">
-          <div className="waitlist-panel">
-            <div className="eyebrow">Early access</div>
-            <h2>Be first for early bird offers.</h2>
-            <p className="section-copy">
-              Join the waitlist to hear when SnapFresh goes live.
-            </p>
-            <WaitlistForm />
-          </div>
-
-          <div className="launch-panel">
-            <div className="eyebrow">Built with care</div>
-            <h2>Simple to start, easy to make your own.</h2>
-            <ul className="trust-list">
-              {launchNotes.map((item) => (
-                <li key={item}>{item}</li>
-              ))}
-            </ul>
-          </div>
-        </div>
-      </section>
     </SiteLayout>
   );
 }

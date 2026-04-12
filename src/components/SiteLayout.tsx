@@ -1,14 +1,8 @@
 import {
-  useEffect,
-  useState,
   type PropsWithChildren,
   type ReactNode,
 } from "react";
-import {
-  trackSupportContactClick,
-  trackWaitlistCtaClick,
-  trackWaitlistSectionView,
-} from "../lib/analytics";
+import { trackSupportContactClick } from "../lib/analytics";
 import { PlateMascot } from "./PlateMascot";
 import { siteConfig, toPageHref, type SitePath } from "../siteContent";
 
@@ -28,37 +22,6 @@ export function SiteLayout({
   pageActions,
   children,
 }: SiteLayoutProps) {
-  const waitlistHref = `${toPageHref(activePath, "/")}#waitlist`;
-  const [isWaitlistVisible, setIsWaitlistVisible] = useState(false);
-
-  useEffect(() => {
-    const waitlistSection = document.getElementById("waitlist");
-
-    if (!waitlistSection) {
-      setIsWaitlistVisible(false);
-      return;
-    }
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        setIsWaitlistVisible(entry.isIntersecting);
-
-        if (entry.isIntersecting) {
-          trackWaitlistSectionView();
-        }
-      },
-      {
-        threshold: 0.2,
-      },
-    );
-
-    observer.observe(waitlistSection);
-
-    return () => {
-      observer.disconnect();
-    };
-  }, [activePath]);
-
   return (
     <div className="site-shell">
       <div className="site-backdrop site-backdrop-one" />
@@ -126,24 +89,6 @@ export function SiteLayout({
         </div>
       </footer>
 
-      <div
-        className={
-          isWaitlistVisible
-            ? "floating-waitlist-bar is-hidden"
-            : "floating-waitlist-bar"
-        }
-      >
-        <div className="container floating-waitlist-inner">
-          <p className="floating-waitlist-copy">For early bird offers...</p>
-          <a
-            className="button button-primary floating-waitlist-button"
-            href={waitlistHref}
-            onClick={() => trackWaitlistCtaClick("floating_bar")}
-          >
-            Join the waitlist
-          </a>
-        </div>
-      </div>
     </div>
   );
 }

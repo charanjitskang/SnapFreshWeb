@@ -513,6 +513,12 @@ section[id] {
   resize: vertical;
 }
 
+.admin-textarea::-webkit-speech-input-indicator,
+.admin-textarea::-webkit-speech-input-results-button,
+.admin-textarea::-webkit-speech-input-results-decoration {
+  display: none;
+}
+
 .admin-save-state {
   color: var(--muted);
   font-size: 0.88rem;
