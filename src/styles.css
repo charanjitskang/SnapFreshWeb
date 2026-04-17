@@ -1039,6 +1039,15 @@ section[id] {
   gap: 0.65rem;
 }
 
+.policy-section a {
+  color: var(--accent, #2563eb);
+  text-decoration: underline;
+}
+
+.policy-section a:hover {
+  opacity: 0.8;
+}
+
 .story-card h3,
 .showcase-copy h3,
 .feature-card h3,

@@ -348,13 +348,6 @@ export const nutritionMethodologySections: SectionContent[] = [
       'Your score is calculated using visible meal components such as vegetables, protein, grains, and preparation style.',
       'Because this is based on image analysis, results are estimates and may not capture exact nutritional values.'
     ]
-  },
-  {
-    title: 'Disclaimer',
-    paragraphs: [
-      'SnapFresh provides general nutrition insights based on visual analysis.',
-      'It is not a medical or diagnostic tool and does not provide medical advice. Always consult a qualified professional for personalized dietary or health guidance.'
-    ]
   }
 ];
 
