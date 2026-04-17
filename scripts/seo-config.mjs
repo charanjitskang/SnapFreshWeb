@@ -25,6 +25,16 @@ export const publicPages = [
     key: 'dataDeletion',
     inputPath: 'data-deletion/index.html',
     pathname: '/data-deletion/'
+  },
+  {
+    key: 'nutritionMethodology',
+    inputPath: 'nutrition-methodology/index.html',
+    pathname: '/nutrition-methodology/'
+  },
+  {
+    key: 'disclaimer',
+    inputPath: 'disclaimer/index.html',
+    pathname: '/disclaimer/'
   }
 ];
 

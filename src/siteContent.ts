@@ -4,7 +4,7 @@ export type SectionContent = {
   bullets?: string[];
 };
 
-export type SitePath = '/' | '/privacy/' | '/terms/' | '/support/' | '/data-deletion/';
+export type SitePath = '/' | '/privacy/' | '/terms/' | '/support/' | '/data-deletion/' | '/nutrition-methodology/' | '/disclaimer/';
 
 export const siteConfig = {
   appName: 'SnapFresh',
@@ -299,6 +299,62 @@ export const supportTopics = [
     title: 'Contact support',
     body:
       'If you need help, contact us at support@snapfresh.app. Please include as much detail as possible, such as screenshots, device type, and steps to reproduce the issue. We typically respond within 24–48 hours.'
+  }
+];
+
+export const disclaimerSections: SectionContent[] = [
+  {
+    title: 'General Information Only',
+    paragraphs: [
+      'SnapFresh provides general nutrition insights based on visual analysis of food images. The information in the app is for informational purposes only and is not intended as medical or professional advice.',
+      'SnapFresh does not provide diagnosis, treatment, or personalized dietary guidance. Always consult a qualified healthcare or nutrition professional before making significant changes to your diet or health routine.'
+    ]
+  },
+  {
+    title: 'AI-Based Estimates',
+    paragraphs: [
+      'The app uses artificial intelligence to estimate food items, portion sizes, and nutritional balance. These results are approximations and may not always be accurate or complete.'
+    ]
+  },
+  {
+    title: 'Scores and Insights',
+    paragraphs: [
+      'Scores, insights, and suggestions are based on general nutrition principles and publicly available guidelines. They should not be relied upon for precise tracking or management of medical conditions.'
+    ]
+  },
+  {
+    title: 'Your Responsibility',
+    paragraphs: [
+      'By using SnapFresh, you acknowledge that any decisions made based on the app\'s insights are your own responsibility.'
+    ]
+  }
+];
+
+export const nutritionMethodologySections: SectionContent[] = [
+  {
+    title: 'How the Score Works',
+    paragraphs: ['The SnapFresh score is based on:'],
+    bullets: [
+      'Meal composition — Higher scores are given to meals with vegetables, fruits, lean protein, and whole grains.',
+      'Preparation methods — Cooking methods like grilling, steaming, or baking score higher than frying.',
+      'Processing level — Minimally processed foods score higher than heavily processed foods.',
+      'Balance — Meals with a good balance of nutrients tend to score higher.',
+      'Penalties — Scores may be reduced for factors such as fried foods, sugary drinks, or high sodium.'
+    ]
+  },
+  {
+    title: 'Why This Score?',
+    paragraphs: [
+      'Your score is calculated using visible meal components such as vegetables, protein, grains, and preparation style.',
+      'Because this is based on image analysis, results are estimates and may not capture exact nutritional values.'
+    ]
+  },
+  {
+    title: 'Disclaimer',
+    paragraphs: [
+      'SnapFresh provides general nutrition insights based on visual analysis.',
+      'It is not a medical or diagnostic tool and does not provide medical advice. Always consult a qualified professional for personalized dietary or health guidance.'
+    ]
   }
 ];
 

@@ -74,6 +74,12 @@ export function SiteLayout({
               <a href={toPageHref(activePath, "/data-deletion/")}>
                 Data deletion
               </a>
+              <a href={toPageHref(activePath, "/nutrition-methodology/")}>
+                Nutrition Methodology
+              </a>
+              <a href={toPageHref(activePath, "/disclaimer/")}>
+                Disclaimer
+              </a>
             </div>
           </div>
           <div>
