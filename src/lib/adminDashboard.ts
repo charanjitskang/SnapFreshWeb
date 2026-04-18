@@ -57,6 +57,14 @@ export interface DashboardDiagnosticEvent {
   batchReceivedAt: string | null;
   contextSummary: string | null;
   environmentSummary: string | null;
+  area: string;
+  headline: string;
+  signalType: string;
+  semanticSeverity: IncidentSeverity;
+  functionName: string | null;
+  statusCode: number | null;
+  errorCode: string | null;
+  operationallyRelevant: boolean;
 }
 
 export interface DashboardIncidentState {

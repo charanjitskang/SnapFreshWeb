@@ -217,6 +217,10 @@ export function buildDiagnosticsContextMarkdown(
     "# SnapFresh Diagnostics Context",
     "",
     `Admin role: ${session.adminUser.role}`,
+    `Area: ${event.area}`,
+    `Headline: ${event.headline}`,
+    `Semantic severity: ${formatSeverityLabel(event.semanticSeverity)}`,
+    `Signal type: ${formatSignalTypeLabel(event.signalType)}`,
     `Level: ${event.level}`,
     `Fatal: ${event.isFatal ? "yes" : "no"}`,
     `Scope: ${event.scope}`,
@@ -224,6 +228,9 @@ export function buildDiagnosticsContextMarkdown(
     `Batch id: ${event.batchId}`,
     `Event id: ${event.eventId ?? event.id}`,
     `Platform/version: ${event.platform ?? "unknown"} / ${event.appVersion ?? "unknown"}`,
+    `Function: ${event.functionName ?? "Unavailable"}`,
+    `Status: ${event.statusCode ?? "Unavailable"}`,
+    `Error code: ${event.errorCode ?? "Unavailable"}`,
     "",
     "## Message",
     event.message,
@@ -288,6 +295,14 @@ function formatSeverityLabel(value: string): string {
   return value.charAt(0).toUpperCase() + value.slice(1);
 }
 
+function formatSignalTypeLabel(value: string): string {
+  return value
+    .split("_")
+    .filter(Boolean)
+    .map((segment) => segment.charAt(0).toUpperCase() + segment.slice(1))
+    .join(" ");
+}
+
 export function buildIncidentContextMarkdown(
   incident: DashboardIncident,
   session: AdminSessionResponse,
@@ -345,11 +360,18 @@ export function buildIncidentContextMarkdown(
     lines.push(
       "",
       "## Latest app diagnostics sample",
+      `- Area: ${incident.latestDiagnostic.area}`,
+      `- Headline: ${incident.latestDiagnostic.headline}`,
+      `- Semantic severity: ${formatSeverityLabel(incident.latestDiagnostic.semanticSeverity)}`,
+      `- Signal type: ${formatSignalTypeLabel(incident.latestDiagnostic.signalType)}`,
       `- Scope: ${incident.latestDiagnostic.scope}`,
       `- Level: ${incident.latestDiagnostic.level}`,
       `- Fatal: ${incident.latestDiagnostic.isFatal ? "yes" : "no"}`,
       `- Occurred at: ${formatDateTime(incident.latestDiagnostic.occurredAt ?? incident.latestDiagnostic.ingestedAt)}`,
       `- Platform/version: ${incident.latestDiagnostic.platform ?? "unknown"} / ${incident.latestDiagnostic.appVersion ?? "unknown"}`,
+      `- Function: ${incident.latestDiagnostic.functionName ?? "Unavailable"}`,
+      `- Status: ${incident.latestDiagnostic.statusCode ?? "Unavailable"}`,
+      `- Error code: ${incident.latestDiagnostic.errorCode ?? "Unavailable"}`,
       `- Message: ${incident.latestDiagnostic.message}`,
       `- Error name: ${incident.latestDiagnostic.errorName ?? "Unavailable"}`,
       `- Context: ${incident.latestDiagnostic.contextSummary ?? "Unavailable"}`,

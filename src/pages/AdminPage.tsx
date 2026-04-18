@@ -93,6 +93,29 @@ function formatSourceLabel(value: DashboardIncident["source"]): string {
   return value === "edge_function" ? "Edge function" : "App diagnostics";
 }
 
+function formatCountLabel(value: number, singular: string, plural = `${singular}s`): string {
+  return `${value} ${value === 1 ? singular : plural}`;
+}
+
+function getDiagnosticIncidents(
+  incidents: IncidentCandidatesResult | null,
+): DashboardIncident[] {
+  return (incidents?.incidents ?? []).filter((incident) => incident.source === "diagnostic");
+}
+
+function countIncidentsBySeverity(
+  incidents: DashboardIncident[],
+  severities: IncidentSeverity[],
+): number {
+  const allowed = new Set(severities);
+  return incidents.filter((incident) => allowed.has(incident.severity)).length;
+}
+
+function extractTagValue(tags: string[], prefix: string): string | null {
+  const match = tags.find((tag) => tag.startsWith(prefix));
+  return match ? match.slice(prefix.length) : null;
+}
+
 async function copyText(value: string): Promise<boolean> {
   if (!navigator.clipboard?.writeText) {
     return false;
@@ -264,23 +287,42 @@ values (
   );
 }
 
-function OverviewCards({ session }: { session: AdminSessionResponse }) {
+function OverviewCards({
+  incidents,
+  session,
+}: {
+  incidents: IncidentCandidatesResult | null;
+  session: AdminSessionResponse;
+}) {
+  const allIncidents = incidents?.incidents ?? [];
+  const diagnosticIncidents = getDiagnosticIncidents(incidents);
+  const affectedReleases = new Set(
+    diagnosticIncidents
+      .map((incident) => incident.latestDiagnostic?.appVersion)
+      .filter((value): value is string => Boolean(value)),
+  );
+  const criticalHighCount = countIncidentsBySeverity(allIncidents, ["critical", "high"]);
+
   return (
     <section className="admin-grid">
       <article className="admin-card">
         <div className="eyebrow">Overview</div>
         <div className="admin-stat-grid">
           <div className="admin-stat-card">
-            <span>Active alerts</span>
-            <strong>{session.snapshot.activeAlertCount}</strong>
+            <span>Open incident clusters</span>
+            <strong>{incidents ? allIncidents.length : session.snapshot.activeAlertCount}</strong>
           </div>
           <div className="admin-stat-card">
-            <span>Failures in 24h</span>
-            <strong>{session.snapshot.recentFailureCount24h}</strong>
+            <span>Critical or high</span>
+            <strong>{criticalHighCount}</strong>
           </div>
           <div className="admin-stat-card">
-            <span>Diagnostics uploads in 24h</span>
-            <strong>{session.snapshot.diagnosticsBatchCount24h}</strong>
+            <span>Client issue clusters</span>
+            <strong>{diagnosticIncidents.length}</strong>
+          </div>
+          <div className="admin-stat-card">
+            <span>Affected releases</span>
+            <strong>{affectedReleases.size || "—"}</strong>
           </div>
         </div>
       </article>
@@ -303,15 +345,153 @@ function OverviewCards({ session }: { session: AdminSessionResponse }) {
           </div>
 
           <div>
-            <h3>Most recent diagnostics upload</h3>
+            <h3>Most recent client signal</h3>
             <p>
-              {session.snapshot.latestDiagnosticsBatch
+              {diagnosticIncidents[0]?.latestDiagnostic
+                ? `${diagnosticIncidents[0].latestDiagnostic.headline} at ${formatDateTime(diagnosticIncidents[0].lastSeenAt)}`
+                : session.snapshot.latestDiagnosticsBatch
                 ? `${session.snapshot.latestDiagnosticsBatch.platform ?? "Unknown platform"} ${session.snapshot.latestDiagnosticsBatch.appVersion ?? "Unknown version"} at ${formatDateTime(session.snapshot.latestDiagnosticsBatch.receivedAt)}`
                 : "No app diagnostics uploaded yet."}
             </p>
+            {diagnosticIncidents[0]?.latestDiagnostic ? (
+              <p className="admin-detail-note">
+                {diagnosticIncidents[0].latestDiagnostic.platform ?? "unknown"} / {diagnosticIncidents[0].latestDiagnostic.appVersion ?? "unknown"} • {diagnosticIncidents[0].summary}
+              </p>
+            ) : null}
           </div>
         </div>
       </article>
+    </section>
+  );
+}
+
+function DiagnosticsFocusCard({
+  incidents,
+}: {
+  incidents: IncidentCandidatesResult | null;
+}) {
+  const diagnosticIncidents = getDiagnosticIncidents(incidents);
+  const areaMap = new Map<string, {
+    label: string;
+    incidentCount: number;
+    occurrenceCount: number;
+    latestSeenAt: string;
+    criticalHighCount: number;
+  }>();
+
+  const platformSet = new Set<string>();
+  const versionSet = new Set<string>();
+
+  for (const incident of diagnosticIncidents) {
+    const label = incident.latestDiagnostic?.area ?? "Runtime Diagnostics";
+    const existing = areaMap.get(label);
+    const platform =
+      incident.latestDiagnostic?.platform
+      ?? extractTagValue(incident.tags, "platform:");
+    const version =
+      incident.latestDiagnostic?.appVersion
+      ?? extractTagValue(incident.tags, "version:");
+
+    if (platform) {
+      platformSet.add(platform);
+    }
+
+    if (version) {
+      versionSet.add(version);
+    }
+
+    if (!existing) {
+      areaMap.set(label, {
+        label,
+        incidentCount: 1,
+        occurrenceCount: incident.occurrenceCount,
+        latestSeenAt: incident.lastSeenAt,
+        criticalHighCount: incident.severity === "critical" || incident.severity === "high" ? 1 : 0,
+      });
+      continue;
+    }
+
+    existing.incidentCount += 1;
+    existing.occurrenceCount += incident.occurrenceCount;
+    if (new Date(incident.lastSeenAt).getTime() > new Date(existing.latestSeenAt).getTime()) {
+      existing.latestSeenAt = incident.lastSeenAt;
+    }
+    if (incident.severity === "critical" || incident.severity === "high") {
+      existing.criticalHighCount += 1;
+    }
+  }
+
+  const topAreas = Array.from(areaMap.values()).sort((a, b) => {
+    if (b.criticalHighCount !== a.criticalHighCount) {
+      return b.criticalHighCount - a.criticalHighCount;
+    }
+
+    if (b.occurrenceCount !== a.occurrenceCount) {
+      return b.occurrenceCount - a.occurrenceCount;
+    }
+
+    return new Date(b.latestSeenAt).getTime() - new Date(a.latestSeenAt).getTime();
+  }).slice(0, 4);
+
+  return (
+    <section className="admin-card">
+      <div className="admin-card-header">
+        <div>
+          <div className="eyebrow">Client Diagnostics Focus</div>
+          <h2>Automatic mobile telemetry, grouped into fix-sized clusters</h2>
+        </div>
+      </div>
+
+      <p className="admin-card-copy">
+        Timeouts, response errors, failed client flows, and runtime faults are
+        promoted here even when the mobile app recorded them as informational
+        breadcrumbs. Raw event browsing stays below for forensics.
+      </p>
+
+      <div className="admin-stat-grid">
+        <div className="admin-stat-card">
+          <span>Client clusters</span>
+          <strong>{diagnosticIncidents.length}</strong>
+        </div>
+        <div className="admin-stat-card">
+          <span>Critical or high</span>
+          <strong>{countIncidentsBySeverity(diagnosticIncidents, ["critical", "high"])}</strong>
+        </div>
+        <div className="admin-stat-card">
+          <span>Platforms seen</span>
+          <strong>{platformSet.size || "—"}</strong>
+        </div>
+        <div className="admin-stat-card">
+          <span>App versions seen</span>
+          <strong>{versionSet.size || "—"}</strong>
+        </div>
+      </div>
+
+      {topAreas.length ? (
+        <div className="admin-list admin-summary-list">
+          {topAreas.map((area) => (
+            <div key={area.label} className="admin-summary-row">
+              <div>
+                <h3>{area.label}</h3>
+                <p className="admin-detail-note">
+                  {formatCountLabel(area.incidentCount, "cluster")} • {formatCountLabel(area.occurrenceCount, "event")} • last seen {formatDateTime(area.latestSeenAt)}
+                </p>
+              </div>
+              {area.criticalHighCount > 0 ? (
+                <span className="admin-pill admin-pill-severity-high">
+                  {formatCountLabel(area.criticalHighCount, "critical/high issue")}
+                </span>
+              ) : null}
+            </div>
+          ))}
+        </div>
+      ) : (
+        <div className="admin-empty-state">
+          {incidents
+            ? "No recurring client diagnostics clusters matched the current window."
+            : "Grouping recurring client diagnostics clusters..."}
+        </div>
+      )}
     </section>
   );
 }
@@ -675,7 +855,6 @@ function IncidentSection({
         {incidents?.incidents.length ? (
           [...incidents.incidents]
             .filter((incident) => !incident.incidentKey.includes("admin-dashboard"))
-            .sort((a, b) => new Date(b.lastSeenAt).getTime() - new Date(a.lastSeenAt).getTime())
             .map((incident) => (
             <IncidentCard
               key={incident.incidentKey}
@@ -858,13 +1037,19 @@ function DiagnosticsSection({
     <section className="admin-card">
       <div className="admin-card-header">
         <div>
-          <div className="eyebrow">Diagnostics</div>
-          <h2>Uploaded mobile runtime diagnostics</h2>
+          <div className="eyebrow">Raw Diagnostics</div>
+          <h2>Recent uploaded mobile runtime events</h2>
         </div>
         <button className="button button-secondary" onClick={onRefresh}>
           {loading ? "Refreshing..." : "Refresh"}
         </button>
       </div>
+
+      <p className="admin-card-copy">
+        Use this only after the grouped incident queue and client diagnostics
+        focus cards above. This feed is the raw event stream for confirming the
+        exact message, scope, stack, and upload context.
+      </p>
 
       <div className="admin-toolbar">
         <label className="field">
@@ -912,22 +1097,27 @@ function DiagnosticsSection({
             <article key={event.id} className="admin-alert-card">
               <div className="admin-alert-header">
                 <div>
-                  <h3>{event.scope}</h3>
+                  <h3>{event.headline}</h3>
                   <p className="admin-detail-note">
-                    {formatDateTime(event.occurredAt ?? event.ingestedAt)} • {event.platform ?? "unknown"} • {event.appVersion ?? "unknown"}
+                    {event.area} • {formatDateTime(event.occurredAt ?? event.ingestedAt)} • {event.platform ?? "unknown"} • {event.appVersion ?? "unknown"}
                   </p>
                 </div>
                 <div className="admin-pill-row">
                   <span className="admin-pill">{event.level}</span>
+                  <span className={`admin-pill admin-pill-severity-${event.semanticSeverity}`}>
+                    {formatSeverityLabel(event.semanticSeverity)}
+                  </span>
+                  <span className="admin-pill">{event.signalType.replace(/_/g, " ")}</span>
                   {event.isFatal ? <span className="admin-pill is-alert">Fatal</span> : null}
                 </div>
               </div>
               <p>{event.message}</p>
-              {event.errorName ? (
-                <p className="admin-detail-note">
-                  Error name: {event.errorName}
-                </p>
-              ) : null}
+              <div className="admin-kv-grid">
+                <span>Scope: {event.scope}</span>
+                <span>Error name: {event.errorName ?? "Unavailable"}</span>
+                <span>Error code: {event.errorCode ?? "Unavailable"}</span>
+                <span>Status: {event.statusCode ?? "Unavailable"}</span>
+              </div>
               <div className="admin-item-actions">
                 <button
                   className="button button-primary"
@@ -1402,7 +1592,8 @@ function AdminAccessPanel() {
         </section>
       ) : null}
 
-      <OverviewCards session={sessionState.data} />
+      <OverviewCards incidents={incidents} session={sessionState.data} />
+      <DiagnosticsFocusCard incidents={incidents} />
       <AlertsCard session={sessionState.data} />
       <IncidentSection
         canManageIncidentState={sessionState.data.capabilities.canManageIncidentState}
