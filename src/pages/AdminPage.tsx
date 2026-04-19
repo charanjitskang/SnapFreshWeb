@@ -44,7 +44,12 @@ type SessionState =
   | { status: "signed-out" }
   | { status: "loading" }
   | { status: "ready"; accessToken: string; data: AdminSessionResponse }
-  | { status: "forbidden"; message: string }
+  | {
+      status: "forbidden";
+      message: string;
+      checkedUserId: string | null;
+      signedInUserId: string | null;
+    }
   | { status: "error"; message: string };
 
 const INCIDENT_STATUS_OPTIONS: Array<{
@@ -123,6 +128,23 @@ async function copyText(value: string): Promise<boolean> {
 
   await navigator.clipboard.writeText(value);
   return true;
+}
+
+function decodeJwtSubject(token: string): string | null {
+  const [, payload] = token.split(".");
+  if (!payload) {
+    return null;
+  }
+
+  try {
+    const normalized = payload.replace(/-/g, "+").replace(/_/g, "/");
+    const padding = normalized.length % 4 === 0 ? "" : "=".repeat(4 - (normalized.length % 4));
+    const decoded = atob(`${normalized}${padding}`);
+    const parsed = JSON.parse(decoded) as { sub?: unknown };
+    return typeof parsed.sub === "string" && parsed.sub.trim() ? parsed.sub : null;
+  } catch {
+    return null;
+  }
 }
 
 function AdminStatusCard({
@@ -221,13 +243,17 @@ function AdminSignedOutCard() {
 function AdminForbiddenCard({
   message,
   userId,
+  signedInUserId,
   email,
 }: {
   message: string;
   userId: string | null;
+  signedInUserId: string | null;
   email: string | null;
 }) {
   const [copyState, setCopyState] = useState<"idle" | "copied" | "failed">("idle");
+  const hasUserIdMismatch = Boolean(userId && signedInUserId && userId !== signedInUserId);
+  const idLabel = hasUserIdMismatch ? "Session token subject" : "Clerk user id";
 
   return (
     <section className="admin-grid">
@@ -235,13 +261,26 @@ function AdminForbiddenCard({
         <div className="eyebrow">Allowlist required</div>
         <h2>Signed in, but this account is not enabled for admin access.</h2>
         <p className="admin-card-copy">
-          {message} Add this Clerk user to `public.admin_users` in Supabase, then
-          refresh the page.
+          {message} Add the ID the backend checked to `public.admin_users` in
+          Supabase, then refresh the page.
         </p>
         <div className="admin-pill-row">
           <span className="admin-pill">Email: {email ?? "Unavailable"}</span>
-          <span className="admin-pill">Clerk user id: {userId ?? "Unavailable"}</span>
+          <span className="admin-pill">
+            {idLabel}: {userId ?? "Unavailable"}
+          </span>
+          {hasUserIdMismatch ? (
+            <span className="admin-pill">
+              Signed-in Clerk user id: {signedInUserId}
+            </span>
+          ) : null}
         </div>
+        {hasUserIdMismatch ? (
+          <p className="admin-detail-note">
+            Your signed-in Clerk user and the subject inside the access token do not
+            match. The backend allowlist uses the session token subject shown above.
+          </p>
+        ) : null}
         <div className="hero-actions">
           <button
             className="button button-secondary"
@@ -263,7 +302,7 @@ function AdminForbiddenCard({
               ? "User id copied."
               : copyState === "failed"
                 ? "Could not copy the user id."
-                : "Use this value to add the first admin row."}
+                : "Use this value for the admin_users row the backend checks."}
           </span>
         </div>
       </article>
@@ -1273,8 +1312,10 @@ function AdminAccessPanel() {
     setSessionState({ status: "loading" });
 
     void (async () => {
+      let accessToken: string | null = null;
+
       try {
-        const accessToken = await getToken();
+        accessToken = await getToken();
         if (!accessToken) {
           throw new AdminSessionError("Clerk session token is not available.", 401);
         }
@@ -1289,9 +1330,12 @@ function AdminAccessPanel() {
         }
 
         if (error instanceof AdminSessionError && error.status === 403) {
+          const checkedUserId = accessToken ? decodeJwtSubject(accessToken) : null;
           setSessionState({
             status: "forbidden",
             message: error.message,
+            checkedUserId,
+            signedInUserId: user?.id ?? null,
           });
           return;
         }
@@ -1308,7 +1352,7 @@ function AdminAccessPanel() {
     return () => {
       cancelled = true;
     };
-  }, [getToken, isLoaded, isSignedIn]);
+  }, [getToken, isLoaded, isSignedIn, user?.id]);
 
   useEffect(() => {
     if (sessionState.status !== "ready") {
@@ -1555,7 +1599,8 @@ function AdminAccessPanel() {
       <AdminForbiddenCard
         email={signedInEmail}
         message={sessionState.message}
-        userId={user?.id ?? null}
+        signedInUserId={sessionState.signedInUserId}
+        userId={sessionState.checkedUserId ?? sessionState.signedInUserId}
       />
     );
   }

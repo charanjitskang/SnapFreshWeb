@@ -34,13 +34,18 @@ function AdminConfigErrorPage() {
               <div className="eyebrow">Missing config</div>
               <h2>The admin page needs public Clerk and Supabase config.</h2>
               <p className="admin-card-copy">
-                Set the missing env vars in `SnapFreshWeb/.env`, then restart the
-                dev server.
+                Fix the missing or invalid env vars in `SnapFreshWeb/.env`, then
+                restart the dev server.
               </p>
               <div className="admin-pill-row">
                 {ADMIN_CONFIG_STATUS.missing.map((name) => (
                   <span key={name} className="admin-pill is-alert">
                     {name}
+                  </span>
+                ))}
+                {ADMIN_CONFIG_STATUS.invalid.map((item) => (
+                  <span key={`${item.env}:${item.reason}`} className="admin-pill is-alert">
+                    {item.env}: {item.reason}
                   </span>
                 ))}
               </div>
