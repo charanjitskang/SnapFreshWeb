@@ -10,6 +10,7 @@ import {
 } from "@clerk/clerk-react";
 import { useEffect, useState } from "react";
 import { PlateMascot } from "../components/PlateMascot";
+import { requireAdminConfig } from "../lib/adminConfig";
 import {
   loadDiagnosticsEvents,
   loadIncidentCandidates,
@@ -147,6 +148,14 @@ function decodeJwtSubject(token: string): string | null {
   }
 }
 
+function getSupabaseProjectHost(): string | null {
+  try {
+    return new URL(requireAdminConfig().supabaseUrl).host;
+  } catch {
+    return null;
+  }
+}
+
 function AdminStatusCard({
   session,
   signedInEmail,
@@ -245,11 +254,13 @@ function AdminForbiddenCard({
   userId,
   signedInUserId,
   email,
+  supabaseProjectHost,
 }: {
   message: string;
   userId: string | null;
   signedInUserId: string | null;
   email: string | null;
+  supabaseProjectHost: string | null;
 }) {
   const [copyState, setCopyState] = useState<"idle" | "copied" | "failed">("idle");
   const hasUserIdMismatch = Boolean(userId && signedInUserId && userId !== signedInUserId);
@@ -269,6 +280,9 @@ function AdminForbiddenCard({
           <span className="admin-pill">
             {idLabel}: {userId ?? "Unavailable"}
           </span>
+          {supabaseProjectHost ? (
+            <span className="admin-pill">Supabase project: {supabaseProjectHost}</span>
+          ) : null}
           {hasUserIdMismatch ? (
             <span className="admin-pill">
               Signed-in Clerk user id: {signedInUserId}
@@ -1266,6 +1280,7 @@ function LookupSection({
 function AdminAccessPanel() {
   const { getToken, isLoaded, isSignedIn } = useAuth();
   const { user } = useUser();
+  const supabaseProjectHost = getSupabaseProjectHost();
   const [sessionState, setSessionState] = useState<SessionState>({
     status: "signed-out",
   });
@@ -1600,6 +1615,7 @@ function AdminAccessPanel() {
         email={signedInEmail}
         message={sessionState.message}
         signedInUserId={sessionState.signedInUserId}
+        supabaseProjectHost={supabaseProjectHost}
         userId={sessionState.checkedUserId ?? sessionState.signedInUserId}
       />
     );
