@@ -3,7 +3,6 @@ import {
   type ReactNode,
 } from "react";
 import { trackSupportContactClick } from "../lib/analytics";
-import { PlateMascot } from "./PlateMascot";
 import { siteConfig, toPageHref, type SitePath } from "../siteContent";
 
 type SiteLayoutProps = PropsWithChildren<{
@@ -22,27 +21,39 @@ export function SiteLayout({
   pageActions,
   children,
 }: SiteLayoutProps) {
+  const homeHref = toPageHref(activePath, "/");
+  const navHref = (section: string) =>
+    activePath === "/" ? `#${section}` : `${homeHref}#${section}`;
+
   return (
     <div className="site-shell">
-      <div className="site-backdrop site-backdrop-one" />
-      <div className="site-backdrop site-backdrop-two" />
+      <div className="sf-stars" aria-hidden="true" />
 
       <header className="site-header">
         <div className="container brand-row">
-          <a className="brand" href={toPageHref(activePath, "/")}>
-            <PlateMascot
-              className="brand-mark"
-              hideArms
-              label="SnapFresh plate logo"
-            />
+          <a className="brand" href={homeHref}>
+            <span className="brand-mark" aria-hidden="true" />
             <div>
               <div className="brand-name" aria-label={siteConfig.appName}>
                 <span>Snap</span>
                 <strong>Fresh</strong>
               </div>
-              <div className="brand-tag">Scan Score Share</div>
+              <div className="brand-tag">Scan · Score · Share</div>
             </div>
           </a>
+
+          <nav className="sf-nav-links" aria-label="Primary">
+            <a href={navHref("how-it-works")}>How it works</a>
+            <a href={navHref("comparison")}>Food score</a>
+            <a href={toPageHref(activePath, "/nutrition-methodology/")}>
+              Methodology
+            </a>
+            <a href={toPageHref(activePath, "/support/")}>Support</a>
+          </nav>
+
+          <div className="sf-nav-meta" aria-hidden="true">
+            iOS · v1.0
+          </div>
         </div>
       </header>
 
@@ -65,21 +76,22 @@ export function SiteLayout({
 
       <footer className="site-footer">
         <div className="container footer-grid">
+          <div className="sf-footer-copy">
+            © 2026 SNAPFRESH · UJASCODE
+          </div>
           <div>
             <div className="footer-title">Links</div>
             <div className="footer-links">
-              <a href={toPageHref(activePath, "/privacy/")}>Privacy Policy</a>
-              <a href={toPageHref(activePath, "/terms/")}>Terms of Use</a>
+              <a href={toPageHref(activePath, "/privacy/")}>Privacy</a>
+              <a href={toPageHref(activePath, "/terms/")}>Terms</a>
               <a href={toPageHref(activePath, "/support/")}>Support</a>
               <a href={toPageHref(activePath, "/data-deletion/")}>
                 Data deletion
               </a>
               <a href={toPageHref(activePath, "/nutrition-methodology/")}>
-                Nutrition Methodology
+                Methodology
               </a>
-              <a href={toPageHref(activePath, "/disclaimer/")}>
-                Disclaimer
-              </a>
+              <a href={toPageHref(activePath, "/disclaimer/")}>Disclaimer</a>
             </div>
           </div>
           <div>
@@ -94,7 +106,6 @@ export function SiteLayout({
           </div>
         </div>
       </footer>
-
     </div>
   );
 }
