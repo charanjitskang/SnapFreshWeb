@@ -2223,6 +2223,10 @@ body {
   font-size: 1.25rem;
 }
 
+.sf-mobile-sticky-cta {
+  display: none;
+}
+
 /* ---- Hero visual (orb + phone) --------------------------------- */
 
 .site-shell:not(.admin-shell) .hero-visual {
@@ -2501,13 +2505,15 @@ body {
   margin-top: 1.25rem;
   aspect-ratio: 16 / 10;
   border-radius: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: var(--sf-font-mono);
-  font-size: 0.65rem;
-  color: rgba(255, 255, 255, 0.25);
-  letter-spacing: 0.1em;
+  overflow: hidden;
+  background: rgba(20, 17, 40, 0.45);
+}
+
+.sf-meal-photo img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
 }
 
 .sf-meal-photo.is-good {
@@ -2706,11 +2712,23 @@ body {
 
 .site-shell:not(.admin-shell) .site-footer {
   padding: 2.5rem 0;
-  border-top: 1px solid var(--sf-line);
-  background: transparent;
+  border-top: 1px solid var(--sf-line-strong);
+  background:
+    radial-gradient(
+      900px 260px at 50% 0%,
+      rgba(104, 89, 172, 0.18),
+      transparent 62%
+    ),
+    linear-gradient(
+      180deg,
+      rgba(9, 8, 20, 0.78) 0%,
+      rgba(13, 11, 28, 0.9) 38%,
+      rgba(9, 8, 20, 0.96) 100%
+    );
   margin-top: 0;
   position: relative;
   z-index: 2;
+  backdrop-filter: blur(10px);
 }
 
 .site-shell:not(.admin-shell) .footer-grid {
@@ -2720,6 +2738,9 @@ body {
   gap: 1.5rem;
   flex-wrap: wrap;
   animation: none;
+  background: transparent;
+  border: 0;
+  box-shadow: none;
 }
 
 .site-shell:not(.admin-shell) .footer-grid > div {
@@ -2744,30 +2765,46 @@ body {
 }
 
 .site-shell:not(.admin-shell) .footer-links a {
-  color: var(--sf-ink-muted);
-  transition: color 180ms ease;
+  color: var(--sf-ink-dim);
+  border-bottom: 1px solid rgba(230, 225, 250, 0.22);
+  transition:
+    color 180ms ease,
+    border-color 180ms ease;
 }
 
 .site-shell:not(.admin-shell) .footer-links a:hover {
-  color: var(--sf-lavender);
+  color: var(--sf-lavender-soft);
+  border-color: rgba(201, 191, 232, 0.68);
 }
 
 .site-shell:not(.admin-shell) .footer-mail {
   font-family: var(--sf-font-mono);
   font-size: 0.72rem;
-  color: var(--sf-ink-muted);
+  color: var(--sf-ink-dim);
   letter-spacing: 0.08em;
   text-transform: lowercase;
+  border-bottom: 1px solid rgba(230, 225, 250, 0.22);
+  transition:
+    color 180ms ease,
+    border-color 180ms ease;
 }
 
 .site-shell:not(.admin-shell) .footer-mail:hover {
-  color: var(--sf-lavender);
+  color: var(--sf-lavender-soft);
+  border-color: rgba(201, 191, 232, 0.68);
+}
+
+.site-shell:not(.admin-shell) .footer-links a:focus-visible,
+.site-shell:not(.admin-shell) .footer-mail:focus-visible {
+  outline: none;
+  color: var(--sf-chrome);
+  border-color: rgba(238, 234, 247, 0.8);
 }
 
 .sf-footer-copy {
   font-family: var(--sf-font-mono);
   font-size: 0.72rem;
-  color: var(--sf-ink-muted);
+  color: var(--sf-ink-dim);
   letter-spacing: 0.1em;
 }
 
@@ -2908,5 +2945,40 @@ body {
   }
   .sf-cta {
     padding: 4.5rem 0;
+  }
+}
+
+@media (max-width: 768px) {
+  .sf-mobile-sticky-cta {
+    display: flex;
+    justify-content: flex-start;
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 50;
+    padding: 0.75rem 1.25rem calc(0.75rem + env(safe-area-inset-bottom));
+    background: linear-gradient(
+      to top,
+      rgba(10, 10, 21, 0.92) 0%,
+      rgba(10, 10, 21, 0.75) 70%,
+      rgba(10, 10, 21, 0) 100%
+    );
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    pointer-events: none;
+    opacity: 0;
+    transform: translateY(12px);
+    transition: opacity 220ms ease, transform 220ms ease;
+  }
+  .sf-mobile-sticky-cta.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .sf-mobile-sticky-cta.is-visible .sf-appstore {
+    pointer-events: auto;
+  }
+  .site-shell:not(.admin-shell) .site-footer {
+    padding-bottom: calc(4.5rem + env(safe-area-inset-bottom));
   }
 }

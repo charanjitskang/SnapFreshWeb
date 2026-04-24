@@ -1,3 +1,4 @@
+import { useEffect, useRef, useState } from "react";
 import { SiteLayout } from "../components/SiteLayout";
 import { toAssetHref } from "../siteContent";
 
@@ -66,6 +67,42 @@ export function HomePage() {
   const scanScreen = toAssetHref("/", "scanning_food_macro.png");
   const shareScreen = toAssetHref("/", "calories_macros_share_food.png");
 
+  const heroCtaRef = useRef<HTMLDivElement>(null);
+  const bottomCtaRef = useRef<HTMLDivElement>(null);
+  const [showStickyCta, setShowStickyCta] = useState(false);
+
+  useEffect(() => {
+    const heroEl = heroCtaRef.current;
+    const bottomEl = bottomCtaRef.current;
+    if (!heroEl || !bottomEl) return;
+
+    let heroVisible = true;
+    let bottomVisible = false;
+    const update = () => setShowStickyCta(!heroVisible && !bottomVisible);
+
+    const heroObs = new IntersectionObserver(
+      ([entry]) => {
+        heroVisible = entry.isIntersecting;
+        update();
+      },
+      { threshold: 0 },
+    );
+    const bottomObs = new IntersectionObserver(
+      ([entry]) => {
+        bottomVisible = entry.isIntersecting;
+        update();
+      },
+      { threshold: 0 },
+    );
+
+    heroObs.observe(heroEl);
+    bottomObs.observe(bottomEl);
+    return () => {
+      heroObs.disconnect();
+      bottomObs.disconnect();
+    };
+  }, []);
+
   return (
     <SiteLayout activePath="/">
       <section className="landing-hero">
@@ -81,9 +118,9 @@ export function HomePage() {
               SnapFresh scores your meal for nutrient balance and gives you
               insights to help you build a more balanced diet.
             </p>
-            <div className="sf-hero-cta">
+            <div className="sf-hero-cta" ref={heroCtaRef}>
               <AppStoreBadge />
-              <span className="sf-hero-note">iOS · free · no account required</span>
+              <span className="sf-hero-note">iOS · free · no long onboarding</span>
             </div>
             <div className="sf-hero-ticker">
               <span>▸ NOVA FRAMEWORK</span>
@@ -169,6 +206,8 @@ export function HomePage() {
               score={34}
               tone="warn"
               caption="Low quality · unbalanced"
+              imageSrc="/meal-a-chips.png"
+              imageAlt="Fried chicken sandwich with chips on a plate"
             />
             <div className="sf-compare-vs">vs</div>
             <MealCard
@@ -178,6 +217,8 @@ export function HomePage() {
               score={84}
               tone="good"
               caption="Balanced · healthy"
+              imageSrc="/meal-b-salmon.png"
+              imageAlt="Grilled salmon with rice, greens, and fruit on a plate"
             />
           </div>
 
@@ -229,13 +270,20 @@ export function HomePage() {
             <em>understood.</em>
           </h2>
           <p className="sf-cta-sub">
-            Free on iOS. No account. No calorie counting. Just look.
+            Free on iOS. No long onboarding. No calorie counting. Just look.
           </p>
-          <div className="sf-cta-action">
+          <div className="sf-cta-action" ref={bottomCtaRef}>
             <AppStoreBadge size="lg" />
           </div>
         </div>
       </section>
+
+      <div
+        className={`sf-mobile-sticky-cta${showStickyCta ? " is-visible" : ""}`}
+        aria-hidden={!showStickyCta}
+      >
+        <AppStoreBadge />
+      </div>
     </SiteLayout>
   );
 }
@@ -247,9 +295,20 @@ type MealCardProps = {
   score: number;
   tone: "good" | "warn";
   caption: string;
+  imageSrc: string;
+  imageAlt: string;
 };
 
-function MealCard({ label, kcal, title, score, tone, caption }: MealCardProps) {
+function MealCard({
+  label,
+  kcal,
+  title,
+  score,
+  tone,
+  caption,
+  imageSrc,
+  imageAlt,
+}: MealCardProps) {
   return (
     <div className="sf-meal-card">
       <div className="sf-meal-head">
@@ -259,7 +318,9 @@ function MealCard({ label, kcal, title, score, tone, caption }: MealCardProps) {
           <small>kcal</small>
         </span>
       </div>
-      <div className={`sf-meal-photo is-${tone}`}>[ meal photo ]</div>
+      <div className={`sf-meal-photo is-${tone}`}>
+        <img src={imageSrc} alt={imageAlt} loading="lazy" decoding="async" />
+      </div>
       <h3 className="sf-meal-title">{title}</h3>
       <div className={`sf-meal-score is-${tone}`}>
         <div className="sf-meal-score-num">{score}</div>
